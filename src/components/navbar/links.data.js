@@ -2,16 +2,16 @@ export const linkData = [
   {
     id: 1,
     name: "about",
-    link: ".aboutContainer",
+    link: "#aboutContainer",
   },
   {
     id: 2,
     name: "projects",
-    link: ".projectsContainer",
+    link: "#projectsContainer",
   },
   {
     id: 3,
     name: "contact",
-    link: ".contactContainer",
+    link: "#contactContainer",
   },
 ];

@@ -1,0 +1,30 @@
+.contactContainer {
+  width: 100%;
+  background-color: #2e2e2e;
+  color: white;
+  padding-top: 2%;
+}
+
+.title {
+  margin: 0px;
+}
+
+.contentContainer {
+  width: 90%;
+  margin: 0 auto;
+}
+
+.info {
+  color: #bbbbbb;
+  font-size: 1.5rem;
+  max-width: 50%;
+}
+
+.email {
+  color: white;
+  margin: 0px;
+}
+
+.socialIconContainer {
+  display: flex;
+}

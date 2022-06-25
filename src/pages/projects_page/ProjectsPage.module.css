@@ -1,0 +1,29 @@
+.projectsHeader {
+  color: white;
+  margin: 0;
+  background-color: #2e2e2e;
+  text-align: center;
+  padding-top: 2%;
+}
+
+.projectsContainer {
+  width: 90%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-gap: 2%;
+  margin-top: 2%;
+}
+
+.projectsPageContainer {
+  background-color: #2e2e2e;
+}
+
+@media screen and (max-width: 650px) {
+  .projectsContainer {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto(1fr);
+    width: 80%;
+  }
+}
