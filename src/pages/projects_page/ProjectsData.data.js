@@ -1,4 +1,3 @@
-import sudokuImage from "../../assets/sudokuGuessrImage.png";
 import mealsToGo from "../../assets/mealsToGo.png";
 import connectCode from "../../assets/connectCode.png";
 import codeocity from "../../assets/codeocity.png";
