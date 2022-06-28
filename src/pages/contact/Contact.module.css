@@ -3,6 +3,7 @@
   background-color: #2e2e2e;
   color: white;
   padding-top: 2%;
+  padding-bottom: 2%;
 }
 
 .title {
@@ -27,4 +28,11 @@
 
 .socialIconContainer {
   display: flex;
+  align-items: center;
+}
+
+@media screen and (max-width: 700px) {
+  .info {
+    max-width: 70%;
+  }
 }

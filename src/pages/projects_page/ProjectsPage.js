@@ -16,6 +16,11 @@ export const ProjectsPage = () => {
               image={item.image}
               color={item.color}
               rotate={item.rotate}
+              secondaryColor={item.secondaryColor}
+              techList={item.techList}
+              myRoleText={item.myRoleText}
+              highlightsList={item.highlightsList}
+              link={item.link}
             />
           );
         })}

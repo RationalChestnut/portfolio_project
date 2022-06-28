@@ -9,8 +9,17 @@ export const Contact = () => {
         <h1 className={styles.title}>Get In Touch</h1>
         <p className={styles.info}>
           If you wanna get in touch, work on something awesome, or just say hi,
-          send an email to{" "}
-          <span className={styles.email}>brian.kw.mason@gmail.com</span>
+          send an email to {""}
+          <span className={styles.email}>
+            <a
+              className={styles.email}
+              target="_blank"
+              rel="noreferrer"
+              href="mailto:brian.kw.mason@gmail.com"
+            >
+              brian.kw.mason@gmail.com
+            </a>
+          </span>
         </p>
         <h1 className={styles.socialTitle}>Socials</h1>
         <div className={styles.socialIconContainer}>

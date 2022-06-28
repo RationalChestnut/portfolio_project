@@ -1,10 +1,16 @@
 import React from "react";
 import styles from "./Social.module.css";
-export const Social = ({ name, image, link }) => {
+import { AiFillInstagram } from "react-icons/ai";
+import { AiFillGithub } from "react-icons/ai";
+export const Social = ({ name, link }) => {
   return (
-    <a href={link} className={styles.link}>
+    <a href={link} className={styles.link} target="_blank" rel="noreferrer">
       <div className={styles.socialContainer}>
-        <img src={image} alt={name} className={styles.icon} />
+        {name === "Github" ? (
+          <AiFillGithub className={styles.icon} />
+        ) : (
+          <AiFillInstagram className={styles.icon} />
+        )}
         <p className={styles.iconName}>{name}</p>
       </div>
     </a>
