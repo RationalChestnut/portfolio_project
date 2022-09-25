@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const ProjectContainer = styled.div`
-  padding: 20px 0px;
+  padding: 25px 0px;
 `;
 
 export const ProjectName = styled.h2``;

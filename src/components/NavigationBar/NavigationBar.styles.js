@@ -1,9 +1,9 @@
 import styled from "styled-components";
 
 export const NavigationBarContainer = styled.div`
-position: -webkit-sticky;
+  position: -webkit-sticky;
   position: sticky;
-  top: 0;
+  top: 0px;
   display: flex;
   flex-direction: column
   align-items: flex-start;

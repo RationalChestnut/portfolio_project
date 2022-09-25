@@ -31,7 +31,7 @@ export const projectsData = [
     name: "Clima",
     image: climaImage,
     role: "Co-Creator",
-    highlights: [],
+    highlights: ["Submitted to congressional hackathon"],
     link: "https://github.com/RationalChestnut/Clima-App",
   },
 ];
