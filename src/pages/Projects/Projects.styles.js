@@ -5,6 +5,9 @@ export const ProjectsContainer = styled.div`
   overflow-x: hidden;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  @media screen and (max-width: 950px) {
+    width: 95%;
+  }
   @media screen and (max-width: 700px) {
     grid-template-columns: 1fr;
   }

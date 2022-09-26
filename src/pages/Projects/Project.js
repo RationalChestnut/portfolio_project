@@ -20,9 +20,11 @@ export const Project = ({ project, left }) => {
       {project.highlights.map((highlight, index) => (
         <ListItem key={index}>- {highlight}</ListItem>
       ))}
-      <Link href={project.link} target="_blank">
-        Link
-      </Link>
+      {project.link && (
+        <Link href={project.link} target="_blank">
+          Link
+        </Link>
+      )}
     </ProjectContainer>
   );
 };

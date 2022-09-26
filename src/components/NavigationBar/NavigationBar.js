@@ -27,7 +27,7 @@ export const Navbar = () => {
       </Name>
       <LinksContainer>
         <Link
-          href="#projects"
+          href="#project"
           initial={{ y: 0, opacity: 0 }}
           animate={{ y: -25, opacity: 1 }}
           transition={{
