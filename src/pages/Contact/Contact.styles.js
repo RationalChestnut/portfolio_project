@@ -16,6 +16,9 @@ export const CollaborateText = styled(motion.p)`
   max-width: 550px;
   line-height: 40px;
   margin: 69.12px 0px 0px;
+  @media screen and (max-width: 600px) {
+    font-size: 24px;
+  }
 `;
 
 export const LinkContainer = styled.div`

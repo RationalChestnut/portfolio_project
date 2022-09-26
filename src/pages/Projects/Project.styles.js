@@ -36,6 +36,10 @@ export const ListItem = styled.p`
   @media screen and (max-width: 950px) {
     font-size: 18px;
   }
+  @media screen and (max-width: 600px) {
+    font-size: 16px;
+    max-width: 90%;
+  }
 `;
 
 export const Link = styled.a`

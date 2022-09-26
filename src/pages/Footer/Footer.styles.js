@@ -11,6 +11,7 @@ export const FooterContainer = styled.div`
 export const Copyright = styled.p`
   @media screen and (max-width: 950px) {
     font-size: 14px;
+    max-width: 40%;
   }
 `;
 
@@ -29,7 +30,7 @@ export const Link = styled.a`
   padding: 0px 10px;
   text-decoration: none;
   @media screen and (max-width: 950px) {
-    font-size: 22px;
+    font-size: 20px;
   }
 `;
 
