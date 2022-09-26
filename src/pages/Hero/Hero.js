@@ -4,7 +4,15 @@ import { HeroContainer, Highlighter, Tagline } from "./Hero.styles";
 export const Hero = () => {
   return (
     <HeroContainer>
-      <Tagline>
+      <Tagline
+        initial={{ y: 0, opacity: 0 }}
+        animate={{ y: -25, opacity: 1 }}
+        transition={{
+          duration: 0.5,
+          delay: 0.5,
+          ease: "easeOut",
+        }}
+      >
         I make <Highlighter>websites & mobile apps</Highlighter>.
       </Tagline>
     </HeroContainer>

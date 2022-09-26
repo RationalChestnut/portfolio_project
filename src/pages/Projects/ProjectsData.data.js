@@ -10,9 +10,10 @@ export const projectsData = [
     role: "Co-founder, Instructor",
     highlights: ["$7,000 revenue", "33 students taught"],
     link: "https://www.codeocity.org/",
+    left: true,
   },
   {
-    name: "Findy",
+    name: "Findsy",
     image: findsyImage,
     role: "Co-creator",
     highlights: [
@@ -26,6 +27,7 @@ export const projectsData = [
     image: contactAiImage,
     role: "Founder, Creator",
     highlights: ["Published Google Play Store", "Published to App Store"],
+    left: true,
   },
   {
     name: "Clima",
