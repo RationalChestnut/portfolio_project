@@ -9,7 +9,7 @@ export const FooterContainer = styled.div`
 `;
 
 export const Copyright = styled.p`
-  @media (max-width: 950px) {
+  @media screen and (max-width: 950px) {
     font-size: 14px;
   }
 `;
@@ -17,7 +17,7 @@ export const Copyright = styled.p`
 export const UpperContentContainer = styled.div`
   display: flex;
   align-items: flex-start;
-  @media (max-width: 950px) {
+  @media screen and (max-width: 950px) {
     display: block;
   }
 `;
@@ -28,7 +28,7 @@ export const Link = styled.a`
   color: #808080;
   padding: 0px 10px;
   text-decoration: none;
-  @media (max-width: 950px) {
+  @media screen and (max-width: 950px) {
     font-size: 22px;
   }
 `;
