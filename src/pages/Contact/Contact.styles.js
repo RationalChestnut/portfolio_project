@@ -7,6 +7,7 @@ export const ContactContainer = styled.div`
   @media (max-width: 950px) {
     height: 60vh;
     padding-top: 0vh;
+    width: 95%;
   }
 `;
 

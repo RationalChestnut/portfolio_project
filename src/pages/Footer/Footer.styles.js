@@ -29,7 +29,7 @@ export const Link = styled.a`
   padding: 0px 10px;
   text-decoration: none;
   @media (max-width: 950px) {
-    display: none;
+    font-size: 22px;
   }
 `;
 

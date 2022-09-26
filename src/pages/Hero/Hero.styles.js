@@ -7,6 +7,7 @@ export const HeroContainer = styled.div`
   align-items: center;
   @media (max-width: 950px) {
     min-height: 60vh;
+    width: 90%;
   }
 `;
 
