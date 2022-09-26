@@ -13,16 +13,16 @@ export const NavigationBarContainer = styled(motion.div)`
   padding-top: 10vh;
   padding-left: 5%;
   align-self: flex-start;
-  @media (max-width: 1650px) {
+  @media screen and (max-width: 1650px) {
     width: 45%;
   }
-  @media (max-width: 1200px) {
+  @media screen and (max-width: 1200px) {
     width: 40%;
   }
-  @media (max-width: 1000px) {
+  @media screen and (max-width: 1000px) {
     width: 45%;
   }
-  @media (max-width: 950px) {
+  @media screen and (max-width: 950px) {
     display: flex;
     flex-direction: column;
     position: static;
@@ -41,7 +41,7 @@ export const NameLink = styled(motion.a)`
 export const Name = styled(motion.h1)`
   font-weight: 300;
   font-size: 42px;
-  @media (max-width: 1280px) {
+  @media screen and (max-width: 1280px) {
     font-size: 30px;
   }
 `;
@@ -56,7 +56,7 @@ export const LinksContainer = styled.div`
   height: 100%;
   position: absolute;
   top: 40%;
-  @media (max-width: 950px) {
+  @media screen and (max-width: 950px) {
     position: static;
     height: 50%;
     width: 100%:
@@ -69,7 +69,7 @@ export const Link = styled(motion.a)`
   padding: 10px 0px;
   text-decoration: none;
   color: #222;
-  @media (max-width: 1280px) {
+  @media screen and (max-width: 1280px) {
     font-size: 30px;
   }
 `;
@@ -77,7 +77,7 @@ export const Link = styled(motion.a)`
 export const Divider = styled.hr`
   width: 80%;
   margin: 0;
-  @media (min-width: 950px) {
+  @media screen and (min-width: 950px) {
     display: none;
   }
 `;
