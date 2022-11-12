@@ -51,7 +51,7 @@ export const projectsData = [
     left: true,
   },
   {
-    name: "Extermahate",
+    name: "ExtermaHate",
     image: extermaHate,
     role: "Co-Creator",
     highlights: ["Won 1st place at BrookCodes"],
