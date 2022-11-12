@@ -2,6 +2,8 @@ import codeocityImage from "../../assets/codeocity.png";
 import findsyImage from "../../assets/findsy.png";
 import contactAiImage from "../../assets/contactai.png";
 import climaImage from "../../assets/clima.png";
+import codeupImage from "../../assets/codeup.png";
+import extermaHate from "../../assets/extermahate.png";
 
 export const projectsData = [
   {
@@ -33,7 +35,25 @@ export const projectsData = [
     name: "Clima",
     image: climaImage,
     role: "Co-Creator",
-    highlights: ["Submitted to congressional hackathon"],
-    link: "https://github.com/RationalChestnut/Clima-App",
+    highlights: [
+      "Submitted to congressional hackathon",
+      "Published Google Play Store",
+      "Published to App Store",
+    ],
+    link: "https://clima2022.netlify.app/",
+  },
+  {
+    name: "CodeUp",
+    image: codeupImage,
+    role: "Founder, President",
+    highlights: ["Taught 30 kids to code", "Raised $113"],
+    link: "https://www.codeupnp.org/",
+  },
+  {
+    name: "Extermahate",
+    image: extermaHate,
+    role: "Co-Creator",
+    highlights: ["Won 1st place at BrookCodes"],
+    link: "https://detective-discord.netlify.app/",
   },
 ];
