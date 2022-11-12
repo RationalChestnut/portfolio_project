@@ -48,6 +48,7 @@ export const projectsData = [
     role: "Founder, President",
     highlights: ["Taught 30 kids to code", "Raised $113"],
     link: "https://www.codeupnp.org/",
+    left: true,
   },
   {
     name: "Extermahate",
