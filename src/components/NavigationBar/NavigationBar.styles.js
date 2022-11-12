@@ -5,6 +5,7 @@ export const NavigationBarContainer = styled(motion.div)`
   position: -webkit-sticky;
   position: sticky;
   top: 0px;
+  z-index: 1;
   display: flex;
   flex-direction: column
   align-items: flex-start;
@@ -51,6 +52,7 @@ export const LastName = styled.span`
 `;
 
 export const LinksContainer = styled.div`
+
   display: flex;
   flex-direction: column;
   height: 100%;

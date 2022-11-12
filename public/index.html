@@ -1,5 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" style="scroll-behavior: smooth; min-width: 100%">
+<html
+  lang="en"
+  style="
+    scroll-behavior: smooth;
+    min-width: 100%;
+    position: absolute; /*this is required for clip-paths to work*/
+    -webkit-clip-path: inset(0); /* safari*/
+    clip-path: inset(0);
+    clip: rect(0px, auto, auto, 0px);
+  "
+>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
@@ -19,6 +29,6 @@
     <title>Portfolio | Brian Mason</title>
   </head>
   <body style="min-width: 100%; overflow-x: hidden">
-    <div id="root" style="min-width: 100%"></div>
+    <div id="root" style="min-width: 100"></div>
   </body>
 </html>
