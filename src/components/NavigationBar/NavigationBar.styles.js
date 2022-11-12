@@ -14,6 +14,7 @@ export const NavigationBarContainer = styled(motion.div)`
   padding-top: 10vh;
   padding-left: 5%;
   align-self: flex-start;
+  
   @media screen and (max-width: 1650px) {
     width: 45%;
   }
