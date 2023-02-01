@@ -42,12 +42,12 @@ export const Contact = () => {
           github
         </Link>
         <Link
-          href="https://www.instagram.com/brian___mason/"
+          href="https://docs.google.com/document/d/14kLh8dTa_ExO1T_4_tljU6eLCbMmPkH9saM14gxAGcU/edit?usp=sharing"
           initial={{ y: 50, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
           transition={{ ease: "easeOut", duration: 0.5 }}
         >
-          instagram
+          resume
         </Link>
       </LinkContainer>
     </ContactContainer>

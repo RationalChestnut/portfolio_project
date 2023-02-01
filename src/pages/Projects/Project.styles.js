@@ -19,8 +19,10 @@ export const ProjectRole = styled.p`
 `;
 
 export const Image = styled.img`
-  width: 400px;
+  max-width: 400px;
+  max-height: 400px;
   border-radius: 10px;
+  align-self: center;
   @media screen and (max-width: 1280px) {
     width: 375px;
   }
