@@ -4,9 +4,34 @@ import contactAiImage from "../../assets/contactai.png";
 import climaImage from "../../assets/clima.png";
 import codeupImage from "../../assets/codeup.png";
 import extermaHate from "../../assets/extermahate.png";
-import kawaii from "../../assets/kawaii.jpg";
+import kawaii from "../../assets/kawaii.png";
 
 export const projectsData = [
+  {
+    name: "Kawaii",
+    image: kawaii,
+    role: "Founder, Creator",
+    highlights: [
+      "Published Google & Apple App Store",
+      "Generated $110 in revenue",
+      "438 users",
+      "22,000+ images generated",
+    ],
+    left: true,
+    link: "https://kawaiiapp.net/",
+  },
+  {
+    name: "Clima",
+    image: climaImage,
+    role: "Co-Creator",
+    highlights: [
+      "Won 2022 congressional hackathon",
+      "Published Google & Apple App Store",
+      "100+ users",
+    ],
+    link: "https://clima2022.netlify.app/",
+    left: false,
+  },
   {
     name: "Codeocity",
     image: codeocityImage,
@@ -23,19 +48,7 @@ export const projectsData = [
     link: "https://www.codeupnp.org/",
     left: false,
   },
-  {
-    name: "Kawaii",
-    image: kawaii,
-    role: "Founder, Creator",
-    highlights: [
-      "Published Google & Apple App Store",
-      "Generated $110 in revenue",
-      "438 users",
-      "22,000+ images generated",
-    ],
-    left: true,
-    link: "https://kawaiiapp.net/",
-  },
+
   {
     name: "ContactAI",
     image: contactAiImage,
@@ -44,7 +57,7 @@ export const projectsData = [
       "Used GPT-3 to generate text",
       "React Native, Node.js, Firebase",
     ],
-    left: false,
+    left: true,
   },
   {
     name: "Findsy",
@@ -55,19 +68,6 @@ export const projectsData = [
       "#1 at Educate Hacks 2022",
     ],
     link: "https://github.com/yxli001/Findsy",
-    left: true,
-  },
-
-  {
-    name: "Clima",
-    image: climaImage,
-    role: "Co-Creator",
-    highlights: [
-      "Won 2022 congressional hackathon",
-      "Published Google & Apple App Store",
-      "100+ users",
-    ],
-    link: "https://clima2022.netlify.app/",
     left: false,
   },
   {
