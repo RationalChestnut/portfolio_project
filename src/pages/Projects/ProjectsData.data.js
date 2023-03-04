@@ -13,8 +13,8 @@ export const projectsData = [
     role: "Founder, Creator",
     highlights: [
       "Published Google & Apple App Store",
-      "Generated $5,000+ in revenue",
-      "7,000+ users",
+      "Generated $11,000+ in revenue",
+      "14,000+ users",
       "1.5 million+ images generated",
     ],
     left: true,
