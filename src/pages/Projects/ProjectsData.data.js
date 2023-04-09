@@ -13,9 +13,10 @@ export const projectsData = [
     role: "Founder, Creator",
     highlights: [
       "Published Google & Apple App Store",
-      "Generated $11,000+ in revenue",
-      "14,000+ users",
-      "1.5 million+ images generated",
+      "$20,000+ in revenue",
+      "30,000+ users",
+      "2 million+ images generated",
+      "T30 Google Play Store Art & Design",
     ],
     left: true,
     link: "https://kawaiiapp.net/",
