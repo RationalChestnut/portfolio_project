@@ -13,9 +13,9 @@ export const projectsData = [
     role: "Founder, Creator",
     highlights: [
       "Published Google & Apple App Store",
-      "$30,000+ in revenue",
-      "50,000+ users",
-      "4 million+ images generated",
+      "$80,000+ in revenue",
+      "110,000+ users",
+      "10 million+ images generated",
       "T25 Google Play Store Art & Design",
     ],
     left: true,
