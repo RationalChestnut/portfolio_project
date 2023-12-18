@@ -1,82 +1,64 @@
 import codeocityImage from "../../assets/codeocity.png";
-import findsyImage from "../../assets/findsy.png";
-import contactAiImage from "../../assets/contactai.png";
 import climaImage from "../../assets/clima.png";
 import codeupImage from "../../assets/codeup.png";
-import extermaHate from "../../assets/extermahate.png";
+import adventureAI from "../../assets/adventureai.png";
 import kawaii from "../../assets/kawaii.png";
 
 export const projectsData = [
   {
-    name: "Kawaii",
+    name: "Agis Companies LLC (Kawaii)",
     image: kawaii,
     role: "Founder, Creator",
     highlights: [
       "Published Google & Apple App Store",
-      "$80,000+ in revenue",
-      "110,000+ users",
+      "$250,000 YTD",
+      "250,000+ users",
+      "Manage a $18,000/month ad budget. 150% average ROAS",
       "10 million+ images generated",
-      "T25 Google Play Store Art & Design",
+      "Rank 21 Google Play Store Art & Design",
+      "Hired and manage 4 freelancers",
     ],
-    left: true,
     link: "https://kawaiiapp.net/",
-  },
-  {
-    name: "Clima",
-    image: climaImage,
-    role: "Co-Creator",
-    highlights: [
-      "Won 2022 congressional hackathon",
-      "Published Google & Apple App Store",
-      "100+ users",
-    ],
-    link: "https://clima2022.netlify.app/",
-    left: false,
-  },
-  {
-    name: "Codeocity",
-    image: codeocityImage,
-    role: "Co-founder, Instructor",
-    highlights: ["$18k+ revenue", "75+ students taught"],
-    link: "https://www.codeocity.org/",
-    left: true,
   },
   {
     name: "CodeUp",
     image: codeupImage,
     role: "Founder, President",
-    highlights: ["Taught 150 kids to code", "Raised $313"],
+    highlights: [
+      "Taught 218 kids to code",
+      "Acquired customers through mass email marketing",
+      "Hired and led a team of 16 instructors",
+    ],
     link: "https://www.codeupnp.org/",
-    left: false,
+  },
+  {
+    name: "Codeocity",
+    image: codeocityImage,
+    role: "Co-founder, Instructor",
+    highlights: [
+      "$22k+ revenue",
+      "100+ students taught",
+      "Hired and led a team of 13 instructors",
+    ],
+    link: "https://www.codeocity.org/",
   },
 
   {
-    name: "ContactAI",
-    image: contactAiImage,
-    role: "Founder, Creator",
-    highlights: [
-      "Used GPT-3 to generate text",
-      "React Native, Node.js, Firebase",
-    ],
-    left: true,
-  },
-  {
-    name: "Findsy",
-    image: findsyImage,
-    role: "Co-creator",
-    highlights: [
-      "Best environmental hackathon at Hack4Pan",
-      "#1 at Educate Hacks 2022",
-    ],
-    link: "https://github.com/yxli001/Findsy",
-    left: false,
-  },
-  {
-    name: "ExtermaHate",
-    image: extermaHate,
+    name: "Clima",
+    image: climaImage,
     role: "Co-Creator",
-    highlights: ["Won 1st place at BrookCodes"],
-    link: "https://detective-discord.netlify.app/",
-    left: true,
+    highlights: ["Won 2022 congressional hackathon"],
+    link: "https://clima2022.netlify.app/",
+  },
+  {
+    name: "AdventureAI",
+    image: adventureAI,
+    role: "Founder",
+    highlights: [
+      "$300+ revenue YTD",
+      "App allowing users to play any text-based game with AI",
+      "1,770 users",
+    ],
+    link: "https://cool-sawine-1bfeee.netlify.app/",
   },
 ];

@@ -6,7 +6,9 @@ export const Projects = () => {
   return (
     <ProjectsContainer id="project">
       {projectsData.map((project, index) => {
-        return <Project project={project} left={project.left} key={index} />;
+        return (
+          <Project project={project} left={index & (2 == 0)} key={index} />
+        );
       })}
     </ProjectsContainer>
   );

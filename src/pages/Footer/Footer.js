@@ -11,7 +11,7 @@ export const Footer = () => {
   return (
     <FooterContainer>
       <Copyright>
-        &#169; Copyright 2022 <ColorSpan>Brian Mason Ltd.</ColorSpan>
+        &#169; Copyright 2023 <ColorSpan>Brian Mason Ltd.</ColorSpan>
       </Copyright>
       <LinksContainer>
         <Link href="#">Home</Link>

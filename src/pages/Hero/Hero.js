@@ -13,7 +13,7 @@ export const Hero = () => {
           ease: "easeOut",
         }}
       >
-        I make <Highlighter>websites & mobile apps</Highlighter>.
+        Programmer<Highlighter>, Founder</Highlighter>.
       </Tagline>
     </HeroContainer>
   );
