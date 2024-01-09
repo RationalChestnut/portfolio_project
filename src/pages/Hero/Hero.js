@@ -13,7 +13,7 @@ export const Hero = () => {
           ease: "easeOut",
         }}
       >
-        Programmer<Highlighter>, Founder, 18 yo</Highlighter>.
+        Programmer<Highlighter>, Founder.</Highlighter>.
       </Tagline>
     </HeroContainer>
   );
