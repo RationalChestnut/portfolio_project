@@ -25,15 +25,16 @@ export const UpperContentContainer = styled.div`
 
 export const LinksContainer = styled.div``;
 
-export const Link = styled.a`
-  color: #808080;
-  padding: 0px 10px;
-  text-decoration: none;
-  @media screen and (max-width: 950px) {
-    font-size: 20px;
-  }
-`;
-
 export const ColorSpan = styled.span`
   color: #808080;
+`;
+
+export const FooterButtonText = styled.a`
+  color: black;
+  font-size: 16px;
+  text-decoration: none;
+  padding: 5px 15px;
+  background-color: transparent;
+  border: 2px solid #cccccc;
+  border-radius: 12px;
 `;

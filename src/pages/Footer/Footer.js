@@ -3,8 +3,8 @@ import {
   ColorSpan,
   Copyright,
   FooterContainer,
-  Link,
   LinksContainer,
+  FooterButtonText,
 } from "./Footer.styles";
 
 export const Footer = () => {
@@ -14,13 +14,9 @@ export const Footer = () => {
         &#169; Copyright 2024 <ColorSpan>Brian Mason</ColorSpan>
       </Copyright>
       <LinksContainer>
-        <Link href="#">Home</Link>
-        <Link
-          href="mailto:brian.kw.mason@gmail.com?subject=Mail from website"
-          target="_blank"
-        >
-          Email
-        </Link>
+        <FooterButtonText href="https://www.yashdagade.com/" target="_blank">
+          Yash →
+        </FooterButtonText>
       </LinksContainer>
     </FooterContainer>
   );
