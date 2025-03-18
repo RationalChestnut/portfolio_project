@@ -1,9 +1,6 @@
 import React from "react";
 import {
-  Divider,
   LastName,
-  Link,
-  LinksContainer,
   ListContainer,
   ListItem,
   Name,
