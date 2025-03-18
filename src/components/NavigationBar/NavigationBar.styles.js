@@ -2,36 +2,17 @@ import styled from "styled-components";
 import { motion } from "framer-motion";
 
 export const NavigationBarContainer = styled(motion.div)`
-  position: -webkit-sticky;
-  position: sticky;
   top: 0px;
   z-index: 1;
   display: flex;
-  flex-direction: column
+  flex-direction: column;
   align-items: flex-start;
   width: 42%;
   height: 100vh;
   padding-top: 10vh;
   padding-left: 5%;
   align-self: flex-start;
-  
-  @media screen and (max-width: 1650px) {
-    width: 45%;
-  }
-  @media screen and (max-width: 1200px) {
-    width: 40%;
-  }
-  @media screen and (max-width: 1000px) {
-    width: 45%;
-  }
-  @media screen and (max-width: 950px) {
-    display: flex;
-    flex-direction: column;
-    position: static;
-    height: 30vh;
-    width: 100%;
-    justify-content: flex-start;
-  }
+  margin-right: 12px;
 `;
 
 export const NameLink = styled(motion.a)`
@@ -84,3 +65,13 @@ export const Divider = styled.hr`
     display: none;
   }
 `;
+
+export const Text = styled.p``;
+
+export const StrongText = styled.h4``;
+
+export const ListContainer = styled.ul`
+  margin: 0;
+`;
+
+export const ListItem = styled.li``;

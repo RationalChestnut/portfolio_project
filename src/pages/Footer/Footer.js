@@ -11,7 +11,7 @@ export const Footer = () => {
   return (
     <FooterContainer>
       <Copyright>
-        &#169; Copyright 2024 <ColorSpan>Brian Mason</ColorSpan>
+        &#169; Copyright 2025 <ColorSpan>Brian Mason</ColorSpan>
       </Copyright>
       <LinksContainer>
         <FooterButtonText href="https://www.yashdagade.com/" target="_blank">

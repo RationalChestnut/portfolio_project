@@ -7,7 +7,7 @@ import { Projects } from "./Projects/Projects";
 export const Content = () => {
   return (
     <ContentContainer>
-      <Hero />
+      {/* <Hero /> */}
       <Projects />
       <Contact />
     </ContentContainer>
