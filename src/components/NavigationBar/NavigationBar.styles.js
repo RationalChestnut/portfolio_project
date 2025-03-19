@@ -2,13 +2,10 @@ import styled from "styled-components";
 import { motion } from "framer-motion";
 
 export const NavigationBarContainer = styled(motion.div)`
-  top: 0px;
-  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   width: 42%;
-  height: 100vh;
   padding-top: 10vh;
   padding-left: 5%;
   align-self: flex-start;
@@ -75,3 +72,9 @@ export const ListContainer = styled.ul`
 `;
 
 export const ListItem = styled.li``;
+
+export const Goals = styled.div`
+  @media screen and (max-width: 950px) {
+    display: none;
+  }
+`;
