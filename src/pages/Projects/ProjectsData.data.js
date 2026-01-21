@@ -4,8 +4,7 @@ import codeupImage from "../../assets/codeup.png";
 import adventureAI from "../../assets/adventureai.png";
 import kawaii from "../../assets/kawaii.png";
 import prleveling from "../../assets/prleveling.png";
-import rizzcheck from "../../assets/rizzcheck.png";
-import snapwear from "../../assets/snapwear.png";
+import leetly from "../../assets/leetly.png";
 
 export const projectsData = [
   {
@@ -54,8 +53,8 @@ export const projectsData = [
     role: "Founder",
     highlights: [
       "Play any text-based game with AI",
-      "$6k+ revenue",
-      "20k+ users",
+      "$12k+ revenue",
+      "32k+ users",
       "Fully organic growth",
     ],
     link: "https://adventureai.netlify.app/",
@@ -66,38 +65,24 @@ export const projectsData = [
     role: "Founder",
     highlights: [
       "Anime-themed lifting app",
-      "$2.5k+ revenue",
-      "27k+ users",
+      "$4k+ revenue",
+      "35k+ users",
       "Fully organic growth",
     ],
     link: "https://adventureai.netlify.app/",
   },
-  {
-    name: "SnapWear",
-    image: snapwear,
-    role: "Co-Founder",
-    highlights: [
-      "App allowing users to try on clothes virtually",
-      "Marketing on social media. Check out our instagram via link below",
-    ],
-    link: "https://www.instagram.com/snapwearapp/",
-  },
-  {
-    name: "RizzCheck",
-    image: rizzcheck,
-    role: "Co-Founder",
-    highlights: [
-      "Talking to girls is hard. Practice with an AI girl and get feedback",
-      "Marketing on social media.",
-    ],
-    link: "https://apps.apple.com/us/app/kawaii-ai-image-generator/id6741718804",
-  },
-
   {
     name: "Clima",
     image: climaImage,
     role: "Co-Creator",
     highlights: ["Won 2022 congressional hackathon"],
     link: "https://clima2022.netlify.app/",
+  },
+  {
+    name: "Leetly",
+    image: leetly,
+    role: "Founder",
+    highlights: ["2k+ revenue"],
+    link: "https://leetlymobile.netlify.app/",
   },
 ];
