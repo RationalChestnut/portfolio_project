@@ -1,10 +1,8 @@
 import styled from "styled-components";
 
 export const FooterContainer = styled.div`
-  font-size: 22px;
-  padding: 100px 5%;
+  padding: 0 40px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
 `;
 
@@ -37,4 +35,13 @@ export const FooterButtonText = styled.a`
   background-color: transparent;
   border: 2px solid #cccccc;
   border-radius: 12px;
+`;
+
+export const ContactContainer = styled.div``;
+
+export const ContactLink = styled.a`
+  font-size: 18px;
+  text-decoration: underline;
+  color: black;
+  padding-right: 20px;
 `;

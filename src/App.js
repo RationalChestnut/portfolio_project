@@ -1,17 +1,22 @@
+import { Route, Routes, useLocation } from "react-router-dom";
 import { AppContainer } from "./App.styles";
 import { Navbar } from "./components/NavigationBar/NavigationBar";
-import { Content } from "./pages/Content";
-import { Footer } from "./pages/Footer/Footer";
-import { UpperContentContainer } from "./pages/Footer/Footer.styles";
+import { About } from "./pages/About/About";
+import { Bookshelf } from "./pages/Bookshelf/Bookshelf";
+import { Placeholder } from "./pages/Placeholder/Placeholder";
 
 function App() {
+  const { pathname } = useLocation();
+
   return (
     <AppContainer>
-      <UpperContentContainer>
-        <Navbar />
-        <Content />
-      </UpperContentContainer>
-      <Footer />
+      {pathname !== "/bookshelf" && <Navbar />}
+      <Routes>
+        <Route path="/" element={<About />} />
+        <Route path="/bookshelf" element={<Bookshelf />} />
+        <Route path="/writing" element={<Placeholder title="Writing" />} />
+        <Route path="/projects" element={<Placeholder title="Projects" />} />
+      </Routes>
     </AppContainer>
   );
 }

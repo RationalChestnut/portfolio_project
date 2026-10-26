@@ -1,81 +1,89 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import {
-  Goals,
+  BurgerButton,
+  BurgerLine,
   LastName,
-  ListContainer,
-  ListItem,
+  MobileMenuLinks,
+  MobileMenuOverlay,
+  MobileNavLink,
   Name,
   NameLink,
   NavigationBarContainer,
-  StrongText,
-  Text,
+  NavLink,
+  NavLinks,
+  NavLinkText,
 } from "./NavigationBar.styles";
 
-export const Navbar = () => {
-  return (
-    <NavigationBarContainer>
-      <Name
-        initial={{ y: 0, opacity: 0 }}
-        animate={{ y: -25, opacity: 1 }}
-        transition={{
-          duration: 0.5,
-          delay: 0.5,
-          ease: "easeOut",
-        }}
-      >
-        <NameLink href="#">
-          Brian K. <LastName>Mason</LastName>
-        </NameLink>
-      </Name>
+const LINKS = [
+  { to: "/", label: "About", end: true },
+  { to: "/bookshelf", label: "Bookshelf" },
+  { to: "/writing", label: "Writing" },
+  { to: "/projects", label: "Projects" },
+];
 
-      <Goals>
-        <Text>
-          Hey I'm Brian! I'm a first year student at Duke University studying
-          philosophy. I love programming, writing, running, lifting, playing
-          tennis, listening to podcasts, reading, and cooking. Oh, also a huge
-          fan of spikeball.
-        </Text>
-        <StrongText>2025 Fitness Goals</StrongText>
-        <ListContainer>
-          <ListItem>
-            Qualify for the Boston Marathon (2:55). Current best time: 3:17
-          </ListItem>
-          <ListItem>Bench 225. Current 1 rep max: 215</ListItem>
-          <ListItem>Survive an Iron Man (thriving is for next year)</ListItem>
-          <ListItem>Weigh 165 at 11% body fat (currently 150 at 11%)</ListItem>
-          <ListItem>Learn to backflip</ListItem>
-        </ListContainer>
-        <StrongText>2025 Academic Goals</StrongText>
-        <ListContainer>
-          <ListItem>Find a subject I love ✅ (philosophy)</ListItem>
-          <ListItem>Average B or B+</ListItem>
-        </ListContainer>
-        <StrongText>2025 Work Goals</StrongText>
-        <ListContainer>
-          <ListItem>Find a co-founder ✅</ListItem>
-          <ListItem>Make 1M revenue</ListItem>
-          <ListItem>Learn how a great company operates</ListItem>
-          <ListItem>
-            Learn how to make products explode on social media
-          </ListItem>
-        </ListContainer>
-        <StrongText>Relationship Goals</StrongText>
-        <ListContainer>
-          <ListItem>Call 1 high school friend a week</ListItem>
-          <ListItem>Find a girl I love ✅</ListItem>
-          <ListItem>Go on a spring break trip ✅</ListItem>
-          <ListItem>
-            Become acquaintances with ~7.5% of Duke's class (120 people)
-          </ListItem>
-          <ListItem>Find 20 friends I love ✅</ListItem>
-        </ListContainer>
-        <StrongText>Misc.</StrongText>
-        <ListContainer>
-          <ListItem>Organize a Hamilton Karoke Night at Duke</ListItem>
-          <ListItem>Read 6 "great" books</ListItem>
-          <ListItem>Read 26 books</ListItem>
-        </ListContainer>
-      </Goals>
-    </NavigationBarContainer>
+export const Navbar = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
+
+  const close = () => setMenuOpen(false);
+
+  return (
+    <>
+      <NavigationBarContainer>
+        <Name>
+          <NameLink to="/" onClick={close}>
+            Brian K. <LastName>Mason</LastName>
+          </NameLink>
+        </Name>
+        <NavLinks>
+          {LINKS.map((link) => (
+            <NavLink key={link.to} to={link.to} end={link.end}>
+              <NavLinkText>{link.label}</NavLinkText>
+            </NavLink>
+          ))}
+        </NavLinks>
+        <BurgerButton
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          <BurgerLine $open={menuOpen} $position="top" />
+          <BurgerLine $open={menuOpen} $position="middle" />
+          <BurgerLine $open={menuOpen} $position="bottom" />
+        </BurgerButton>
+      </NavigationBarContainer>
+
+      <AnimatePresence>
+        {menuOpen && (
+          <MobileMenuOverlay
+            key="mobile-menu"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+          >
+            <MobileMenuLinks>
+              {LINKS.map((link) => (
+                <MobileNavLink
+                  key={link.to}
+                  to={link.to}
+                  end={link.end}
+                  onClick={close}
+                >
+                  {link.label}
+                </MobileNavLink>
+              ))}
+            </MobileMenuLinks>
+          </MobileMenuOverlay>
+        )}
+      </AnimatePresence>
+    </>
   );
 };

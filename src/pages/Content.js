@@ -7,8 +7,8 @@ export const Content = () => {
   return (
     <ContentContainer>
       {/* <Hero /> */}
-      <Projects />
-      <Contact />
+      {/* <Projects />
+      <Contact /> */}
     </ContentContainer>
   );
 };
