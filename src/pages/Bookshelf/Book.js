@@ -1,7 +1,7 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   Backdrop,
-  Cover,
+  CloseButton,
   Flow,
   FLOW_GAP,
   FlowWindow,
@@ -71,8 +71,7 @@ const BookPage = ({ side, page, number, context }) => {
   );
 };
 
-// `renderCover(scale)` draws the book's cover lettering at a given size.
-export const OpenBook = ({ book, vp, onClose, renderCover }) => {
+export const OpenBook = ({ book, vp, onClose }) => {
   const [at, setAt] = useState(0); // spread index
   const [turn, setTurn] = useState(null); // { dir: 1 | -1, to }
   const stacked = vp.w < 760;
@@ -81,7 +80,6 @@ export const OpenBook = ({ book, vp, onClose, renderCover }) => {
   const h = Math.round(Math.min(vp.h * 0.92, (vp.w * 0.94) / 1.5));
   const w = Math.round(h * 1.5);
   const base = h * 0.019;
-  const pageW = w / 2;
 
   // Count the pages each flowing piece fills, from a hidden copy of its page.
   const flowIndexes = useMemo(
@@ -156,88 +154,101 @@ export const OpenBook = ({ book, vp, onClose, renderCover }) => {
   const rightAt = turn && turn.dir > 0 ? turn.to : at;
   const forward = turn && turn.dir > 0;
 
+  // Keep Close clear of the book. Phones: above the first page, lined up with its
+  // right edge (the pages are 94vw wide, centered). Desktop: in the side margin,
+  // level with the book's top, or in the top margin when the sides are too narrow.
+  const sideMargin = (vp.w - w) / 2;
+  const topMargin = (vp.h - h) / 2;
+  const closeAt = stacked
+    ? { right: Math.round(vp.w * 0.03) }
+    : sideMargin >= 64
+    ? { top: topMargin, right: (sideMargin - 40) / 2 }
+    : { top: Math.max(6, (topMargin - 40) / 2), right: 14 };
+
+  // The book has already turned face-out on the shelf; it opens straight away.
   return (
-    // Desktop: the cover swings open and the pages fade in behind it.
-    // Phones: no cover; the pages appear right away.
-    <Backdrop
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: stacked ? 0.15 : 0.3 }}
-      onClick={onClose}
-    >
-      <Scene w={w} h={h} onClick={(e) => e.stopPropagation()}>
-        <Spread
-          base={base}
-          initial={stacked ? false : { opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.45, duration: 0.4, ease: "easeOut" }}
-        >
-          {stacked ? (
-            book.pages.map((page, i) => (
-              <BookPage key={i} side={i % 2 ? "right" : "left"} page={page} number={folio(i)} context={context} />
-            ))
-          ) : (
-            <>
-              {flowIndexes.map((i) => (
-                <MeasurePage key={`measure-${i}`} side="right" aria-hidden>
-                  <FlowWindow>
-                    <Flow
-                      ref={(el) => {
-                        measureRefs.current[i] = el;
-                      }}
-                    >
-                      {book.pages[i].flow}
-                    </Flow>
-                  </FlowWindow>
-                </MeasurePage>
-              ))}
+    <>
+      <Backdrop
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.15 }}
+        onClick={onClose}
+      >
+        <Scene w={w} h={h} onClick={(e) => e.stopPropagation()}>
+          <Spread base={base}>
+            {stacked ? (
+              book.pages.map((page, i) => (
+                <BookPage key={i} side={i % 2 ? "right" : "left"} page={page} number={folio(i)} context={context} />
+              ))
+            ) : (
+              <>
+                {flowIndexes.map((i) => (
+                  <MeasurePage key={`measure-${i}`} side="right" aria-hidden>
+                    <FlowWindow>
+                      <Flow
+                        ref={(el) => {
+                          measureRefs.current[i] = el;
+                        }}
+                      >
+                        {book.pages[i].flow}
+                      </Flow>
+                    </FlowWindow>
+                  </MeasurePage>
+                ))}
 
-              {render(leftAt, "left")}
-              {render(rightAt, "right")}
-              <Gutter />
+                {render(leftAt, "left")}
+                {render(rightAt, "right")}
+                <Gutter />
 
-              {turn && (
-                <Leaf
-                  key={`${at}-${turn.to}`}
-                  side={forward ? "right" : "left"}
-                  initial={{ rotateY: 0 }}
-                  animate={{ rotateY: forward ? -180 : 180 }}
-                  transition={LEAF_TURN}
-                  onAnimationComplete={() => {
-                    setAt(turn.to);
-                    setTurn(null);
-                  }}
-                >
-                  <LeafFace>{render(at, forward ? "right" : "left")}</LeafFace>
-                  <LeafFace back>{render(turn.to, forward ? "left" : "right")}</LeafFace>
-                </Leaf>
-              )}
+                {turn && (
+                  <Leaf
+                    key={`${at}-${turn.to}`}
+                    side={forward ? "right" : "left"}
+                    initial={{ rotateY: 0 }}
+                    animate={{ rotateY: forward ? -180 : 180 }}
+                    transition={LEAF_TURN}
+                    onAnimationComplete={() => {
+                      setAt(turn.to);
+                      setTurn(null);
+                    }}
+                  >
+                    <LeafFace>{render(at, forward ? "right" : "left")}</LeafFace>
+                    <LeafFace back>{render(turn.to, forward ? "left" : "right")}</LeafFace>
+                  </Leaf>
+                )}
 
-              {!turn && at > 0 && (
-                <PageTurn side="left" onClick={() => go(-1)}>
-                  ← {spreadTitle(at - 1) || "Back"}
-                </PageTurn>
-              )}
-              {!turn && at < spreadCount - 1 && (
-                <PageTurn side="right" onClick={() => go(1)}>
-                  {spreadTitle(at + 1) || "Next"} →
-                </PageTurn>
-              )}
-            </>
-          )}
-        </Spread>
-        {!stacked && (
-          <Cover
-            color={book.color}
-            initial={{ rotateY: 0 }}
-            animate={{ rotateY: -180 }}
-            transition={{ delay: 0.2, duration: 0.9, ease: [0.6, 0, 0.3, 1] }}
-          >
-            {renderCover(pageW / 300)}
-          </Cover>
-        )}
-      </Scene>
-    </Backdrop>
+                {!turn && at > 0 && (
+                  <PageTurn side="left" onClick={() => go(-1)}>
+                    ← {spreadTitle(at - 1) || "Back"}
+                  </PageTurn>
+                )}
+                {!turn && at < spreadCount - 1 && (
+                  <PageTurn side="right" onClick={() => go(1)}>
+                    {spreadTitle(at + 1) || "Next"} →
+                  </PageTurn>
+                )}
+              </>
+            )}
+          </Spread>
+        </Scene>
+      </Backdrop>
+
+      {/* Outside the scrolling backdrop so it stays put while the pages scroll */}
+      <CloseButton
+        aria-label="Close book"
+        title="Close"
+        $compact={!stacked}
+        style={closeAt}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0, transition: { duration: 0.15 } }}
+        transition={{ duration: 0.15 }}
+        onClick={onClose}
+      >
+        <span aria-hidden>×</span>
+        {stacked && " Close"}
+      </CloseButton>
+    </>
   );
 };

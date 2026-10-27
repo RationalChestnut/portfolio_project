@@ -157,6 +157,7 @@ export const Shelf = () => {
   const [selected, setSelected] = useState(null);
   const selectedRef = useRef(selected);
   selectedRef.current = selected;
+  const openTimer = useRef(null);
 
   const vp = useViewport();
   // Phones get their own layout: a masthead, a row of spines, and details below.
@@ -318,6 +319,20 @@ export const Shelf = () => {
     return () => el.removeEventListener("wheel", onWheel);
   }, [moveBy]);
 
+  // A book turns face-out first if it isn't already, then opens.
+  const openBook = useCallback(
+    (i) => {
+      clearTimeout(openTimer.current);
+      const open = () => {
+        if (Math.round(indexRef.current) === i) setSelected(i); // unless scrolled away meanwhile
+      };
+      if (Math.round(indexRef.current) === i) return open();
+      goTo(i);
+      openTimer.current = setTimeout(open, TURN.duration * 1000);
+    },
+    [goTo]
+  );
+
   useEffect(() => {
     const onKey = (e) => {
       if (selectedRef.current !== null) {
@@ -327,19 +342,25 @@ export const Shelf = () => {
       const at = Math.round(indexRef.current);
       if (e.key === "ArrowRight") goTo(at + 1);
       if (e.key === "ArrowLeft") goTo(at - 1);
-      if (e.key === "Enter" && BOOKS[at].pages) setSelected(at);
+      if (e.key === "Enter" && BOOKS[at].pages) openBook(at);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [goTo]);
+  }, [goTo, openBook]);
 
-  useEffect(() => () => clearTimeout(snapTimer.current), []);
+  useEffect(
+    () => () => {
+      clearTimeout(snapTimer.current);
+      clearTimeout(openTimer.current);
+    },
+    []
+  );
 
   // Clicking turns a book face-out, and the About Me books open right away.
   const handleClick = (i) => {
     if (dragged.current > 8) return; // that was a swipe, not a tap
-    goTo(i);
-    if (BOOKS[i].pages) setSelected(i);
+    if (BOOKS[i].pages) openBook(i);
+    else goTo(i);
   };
 
   return (
@@ -487,7 +508,6 @@ export const Shelf = () => {
             book={BOOKS[selected]}
             vp={vp}
             onClose={() => setSelected(null)}
-            renderCover={(scale) => <CoverFace book={BOOKS[selected]} scale={scale} />}
           />
         )}
       </AnimatePresence>

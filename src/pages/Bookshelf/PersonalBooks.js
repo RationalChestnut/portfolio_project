@@ -11,6 +11,7 @@ import {
   ContentsEntry,
   ContentsGroup,
   ContentsMeta,
+  ContentsTitle,
   Done,
   Empty,
   Goals,
@@ -302,7 +303,7 @@ const contentsPage = ({ folioOf, turnTo }) => (
         {PIECES.filter((piece) => piece.group === group).map((piece) => (
           <ContentsEntry key={piece.id} onClick={() => turnTo(piece.id)}>
             <span>
-              {piece.title}
+              <ContentsTitle>{piece.title}</ContentsTitle>
               <ContentsMeta>{piece.date}</ContentsMeta>
             </span>
             {folioOf(piece.id) && (

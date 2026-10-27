@@ -1,12 +1,34 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { motion } from "framer-motion";
-import { cloth, NOISE } from "./Shelf.styles";
+import { NOISE } from "./Shelf.styles";
 
 const garamond = `"EB Garamond", Garamond, "Times New Roman", serif`;
 const ink = "#2a241f";
 const muted = "#8a7f72";
 const accent = "#7a2416";
 const narrow = "@media (max-width: 760px)";
+
+/* Every link in a book: black and underlined, the same before, during and after a click */
+const link = css`
+  color: ${ink};
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  text-decoration-color: rgba(42, 36, 31, 0.45);
+  transition: text-decoration-color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+
+  &:visited,
+  &:active {
+    color: ${ink};
+  }
+
+  &:hover,
+  &:focus-visible {
+    text-decoration-color: ${ink};
+  }
+`;
 
 /* Light, slightly blurred room behind the open book */
 export const Backdrop = styled(motion.div)`
@@ -31,16 +53,64 @@ export const Backdrop = styled(motion.div)`
   }
 `;
 
+/* Pinned to the screen's top-right corner so there's always a way back to the shelf */
+export const CloseButton = styled(motion.button)`
+  position: fixed;
+  top: max(14px, env(safe-area-inset-top));
+  right: 14px;
+  z-index: 51;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 8px 16px 8px 13px;
+  border: 1px solid #d8cdb9;
+  border-radius: 999px;
+  background: #f6f1e6;
+  box-shadow: 0 4px 14px -6px rgba(60, 45, 25, 0.45);
+  cursor: pointer;
+  font-family: ${garamond};
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #6e6155;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: ${accent};
+  }
+
+  & span {
+    font-size: 17px;
+    line-height: 1;
+    letter-spacing: 0;
+  }
+
+  /* Desktop: just the ×, small enough to sit in the margin beside the book */
+  ${({ $compact }) =>
+    $compact &&
+    `
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    justify-content: center;
+
+    & span {
+      font-size: 21px;
+    }
+  `}
+`;
+
 export const Scene = styled.div`
   position: relative;
   width: ${({ w }) => w}px;
   height: ${({ h }) => h}px;
   perspective: 3000px;
 
+  /* Room above the first page for the Close button */
   ${narrow} {
     width: 94vw;
     height: auto;
-    margin: 3vh 0;
+    margin: calc(max(14px, env(safe-area-inset-top)) + 50px) 0 3vh;
   }
 `;
 
@@ -237,14 +307,7 @@ export const Para = styled.p`
 `;
 
 export const BookLink = styled.a`
-  color: ${accent};
-  text-decoration: none;
-  border-bottom: 1px solid rgba(122, 36, 22, 0.35);
-  transition: border-color 0.2s ease;
-
-  &:hover {
-    border-bottom-color: ${accent};
-  }
+  ${link}
 `;
 
 /* Crease down the middle of the spread */
@@ -268,35 +331,6 @@ export const Gutter = styled.div`
   ${narrow} {
     display: none;
   }
-`;
-
-/* Front cover over the right page, hinged at the spine; swings open to the left */
-export const Cover = styled(motion.div)`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 50%;
-  box-sizing: border-box;
-  padding: 9% 7% 7%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  text-align: center;
-  z-index: 6;
-  pointer-events: none;
-  transform-origin: left center;
-  backface-visibility: hidden;
-  background-color: ${({ color }) => color};
-  border-radius: 0 4px 4px 0;
-  box-shadow: inset 14px 0 10px -8px rgba(0, 0, 0, 0.3),
-    0 30px 60px -20px rgba(40, 30, 15, 0.45);
-
-  ${narrow} {
-    display: none;
-  }
-
-  ${cloth}
 `;
 
 /* ---------- Page turning ---------- */
@@ -340,12 +374,7 @@ export const PageTurn = styled.button`
   font-size: 0.72em;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: ${muted};
-  transition: color 0.2s ease;
-
-  &:hover {
-    color: ${accent};
-  }
+  ${link}
 
   ${narrow} {
     display: none;
@@ -423,13 +452,7 @@ export const PageNote = styled.a`
   z-index: 2;
   font-size: 0.72em;
   letter-spacing: 0.08em;
-  color: ${muted};
-  text-decoration: none;
-  transition: color 0.2s ease;
-
-  &:hover {
-    color: ${accent};
-  }
+  ${link}
 
   ${narrow} {
     position: static;
@@ -600,6 +623,11 @@ export const ContentsGroup = styled.h3`
   }
 `;
 
+/* The underlined title in a Contents entry (its date sits below, not underlined) */
+export const ContentsTitle = styled.span`
+  ${link}
+`;
+
 export const ContentsEntry = styled.button`
   display: flex;
   align-items: baseline;
@@ -612,10 +640,11 @@ export const ContentsEntry = styled.button`
   cursor: pointer;
   font: inherit;
   text-align: left;
-  color: ${ink};
+  ${link}
+  text-decoration: none;
 
-  &:hover {
-    color: ${accent};
+  &:hover ${ContentsTitle}, &:focus-visible ${ContentsTitle} {
+    text-decoration-color: ${ink};
   }
 `;
 
