@@ -6,7 +6,6 @@ import {
   Band,
   Box,
   CoverAuthor,
-  CoverRule,
   CoverTitle,
   Depth,
   DetailAuthor,
@@ -130,7 +129,6 @@ const CoverFace = ({ book, scale = 1 }) => (
     <CoverTitle size={titleSize(book.title, scale)} ink={book.ink}>
       {book.title}
     </CoverTitle>
-    <CoverRule ink={book.ink} />
     <CoverAuthor size={Math.round(19 * scale)} ink={book.ink}>
       {book.author}
     </CoverAuthor>

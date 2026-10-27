@@ -407,15 +407,6 @@ export const CoverTitle = styled.span`
   opacity: 0.88;
 `;
 
-export const CoverRule = styled.span`
-  position: relative;
-  z-index: 1;
-  width: 14%;
-  height: 1px;
-  background: ${({ ink }) => ink};
-  opacity: 0.45;
-`;
-
 export const CoverAuthor = styled.span`
   position: relative;
   z-index: 1;
