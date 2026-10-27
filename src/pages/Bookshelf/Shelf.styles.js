@@ -313,6 +313,87 @@ export const SpineAuthor = styled.span`
   white-space: nowrap;
 `;
 
+/* ---------- Phone layout ---------- */
+
+/* "The library of / Brian K. Mason" at the top of the screen */
+export const Masthead = styled.header`
+  position: absolute;
+  top: ${({ top }) => top}px;
+  left: ${({ inset }) => inset}px;
+  right: ${({ inset }) => inset}px;
+  z-index: 3;
+  pointer-events: none;
+`;
+
+export const Kicker = styled.div`
+  margin-bottom: 6px;
+  font-family: ${garamond};
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #8a7f72;
+`;
+
+export const MastTitle = styled.h1`
+  margin: 0;
+  font-family: ${garamond};
+  font-size: clamp(30px, 9vw, 40px);
+  font-weight: 400;
+  line-height: 1.1;
+  color: #2a241f;
+`;
+
+/* Details for the lifted book, below the shelf */
+export const Details = styled(motion.div)`
+  position: absolute;
+  left: ${({ inset }) => inset}px;
+  right: ${({ inset }) => inset}px;
+  top: ${({ top }) => top}px;
+  z-index: 3;
+`;
+
+export const DetailTitle = styled.h2`
+  margin: 0;
+  font-family: ${garamond};
+  font-size: clamp(26px, 8vw, 36px);
+  font-weight: 400;
+  line-height: 1.1;
+  color: #2a241f;
+`;
+
+export const DetailAuthor = styled.div`
+  margin-top: 4px;
+  font-family: ${garamond};
+  font-size: 18px;
+  color: #3b332b;
+`;
+
+export const DetailNote = styled.div`
+  margin-top: 6px;
+  font-family: ${garamond};
+  font-size: 17px;
+  font-style: italic;
+  color: #7a6f63;
+`;
+
+export const Rating = styled.div`
+  margin-top: 10px;
+  font-family: ${garamond};
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #8a7f72;
+`;
+
+export const RatingValue = styled.span`
+  margin-left: 0.7em;
+  font-size: 17px;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  font-style: ${({ unrated }) => (unrated ? "italic" : "normal")};
+  color: ${({ unrated }) => (unrated ? "#8a7f72" : "#2a241f")};
+`;
+
 /* Lettering for books without a photographed cover (About Me) */
 export const CoverTitle = styled.span`
   position: relative;

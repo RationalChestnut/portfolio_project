@@ -9,10 +9,19 @@ import {
   CoverRule,
   CoverTitle,
   Depth,
+  DetailAuthor,
+  DetailNote,
+  Details,
+  DetailTitle,
   Divider,
   DividerCard,
   Front,
+  Kicker,
   Lower,
+  Masthead,
+  MastTitle,
+  Rating,
+  RatingValue,
   Plank,
   PlankFront,
   PlankTop,
@@ -32,6 +41,7 @@ const dp = (id) => `https://www.amazon.com/dp/${id}`;
 const cover = (slug) => `${process.env.PUBLIC_URL}/covers/${slug}.jpg`;
 
 // Spine colors follow each book's real cover; `font` picks the spine lettering.
+// Add `rating: 8` to a book to show "My rating 8/10" under the shelf on phones.
 const READ = [
   { title: "Sapiens", author: "Yuval Noah Harari", color: "#f3f0e9", ink: "#b0262d", w: 50, h: 430, font: "serifCaps", cover: cover("sapiens"), ratio: 0.662, url: dp("0062316095"), note: "A brief history of humankind." },
   { title: "The Alchemist", author: "Paulo Coelho", color: "#e2742b", ink: "#fdebc9", w: 34, h: 350, font: "serif", bands: true, cover: cover("the-alchemist"), ratio: 0.661, url: dp("0062315005"), note: "A shepherd's journey toward his personal legend." },
@@ -91,6 +101,18 @@ const tint = (hex, amount = 0.12) => {
 
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 
+const ORDINALS = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth", "thirteenth", "fourteenth", "fifteenth", "sixteenth", "seventeenth", "eighteenth", "nineteenth"];
+const TENS = { 2: ["twentieth", "twenty"], 3: ["thirtieth", "thirty"], 4: ["fortieth", "forty"] };
+
+// 1 -> "first", 23 -> "twenty-third"
+const ordinal = (n) => {
+  if (n < 20) return ORDINALS[n - 1];
+  const [round, prefix] = TENS[Math.floor(n / 10)] || ["", ""];
+  return n % 10 ? `${prefix}-${ORDINALS[(n % 10) - 1]}` : round;
+};
+
+const lastName = (author) => author.split(" ").pop();
+
 const titleSize = (title, scale = 1) =>
   Math.round((title.length <= 12 ? 34 : title.length <= 22 ? 28 : 23) * scale);
 
@@ -130,23 +152,30 @@ export const Shelf = () => {
   const indexRef = useRef(0);
   const snapTimer = useRef(null);
   const touchX = useRef(null);
+  const dragged = useRef(0); // how far the current touch has moved, to tell swipes from taps
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState(null);
   const selectedRef = useRef(selected);
   selectedRef.current = selected;
 
   const vp = useViewport();
+  // Phones get their own layout: a masthead, a row of spines, and details below.
+  const phone = vp.w < 760;
 
   // Books scale with the window, leaving room for the shelf below,
-  // and staying narrow enough on phones that the widest cover fits uncropped.
+  // and staying narrow enough that the widest cover fits uncropped.
   const widestCover = 440 * Math.max(...BOOKS.map((book) => book.ratio));
-  const s = clamp(Math.min((vp.h * 0.64) / 440, (vp.w * 0.64) / widestCover), 0.5, 2.2);
+  const s = phone
+    ? clamp(Math.min((vp.h * 0.4) / 440, (vp.w * 0.66) / widestCover), 0.45, 1.2)
+    : clamp(Math.min((vp.h * 0.64) / 440, (vp.w * 0.64) / widestCover), 0.5, 2.2);
+  // Phone spines are drawn thicker so their lettering stays readable.
+  const thickness = phone ? 1.55 : 1;
   // Books stand shoulder to shoulder.
   const gap = Math.max(1, Math.round(1.5 * s));
   const plankTop = Math.round(14 * s);
   const plankFront = Math.round(30 * s);
-  // On phones the books are shorter, so lift the shelf toward the middle.
-  const plankBottom = Math.round(vp.w < 760 ? (vp.h - 475 * s) * 0.45 : vp.h * 0.1);
+  // On phones the shelf sits higher to leave room for the details panel below it.
+  const plankBottom = Math.round(phone ? vp.h * 0.3 : vp.h * 0.1);
   // Books stand halfway back on the plank's top surface.
   const booksBottom = plankBottom + plankFront + Math.round(plankTop * 0.5);
   const divider = {
@@ -162,13 +191,49 @@ export const Shelf = () => {
 
   const sized = BOOKS.map((book) => {
     const h = Math.round(book.h * s);
-    const t = Math.round(book.w * s);
+    const t = Math.round(book.w * s * thickness);
     const cw = Math.round(h * book.ratio);
     return { h, t, cw };
   });
 
   const active = Math.round(index);
   const frac = index - active;
+
+  // Covers attach as the face-out book nears them and then stay attached, so a
+  // cover never disappears while its book is still turning.
+  const [coversShown, setCoversShown] = useState(() => new Set());
+  useEffect(() => {
+    setCoversShown((shown) => {
+      const near = [];
+      for (let i = Math.max(0, active - 3); i <= Math.min(LAST, active + 3); i++) {
+        if (!shown.has(i)) near.push(i);
+      }
+      return near.length ? new Set([...shown, ...near]) : shown;
+    });
+  }, [active]);
+
+  // Once the shelf has settled, quietly load every other cover, two at a time,
+  // so a fast scroll never reaches a cover that isn't ready. Phones skip this to
+  // save data and load covers only as they approach.
+  useEffect(() => {
+    if (phone) return undefined;
+    let cancelled = false;
+    const queue = BOOKS.filter((book) => book.cover).map((book) => book.cover);
+    const loadNext = () => {
+      if (cancelled || !queue.length) return;
+      const img = new Image();
+      img.onload = img.onerror = loadNext;
+      img.src = queue.shift();
+    };
+    const start = setTimeout(() => {
+      loadNext();
+      loadNext();
+    }, 1500);
+    return () => {
+      cancelled = true;
+      clearTimeout(start);
+    };
+  }, [phone]);
 
   // Measure each divider's tab so a section is never narrower than its tab.
   const tabRefs = useRef([]);
@@ -179,16 +244,20 @@ export const Shelf = () => {
     if (document.fonts) document.fonts.ready.then(measure); // Garamond changes the width
   }, [divider.fs, divider.tab]);
 
+  // What stands on the shelf: phones show just the books, no dividers.
+  const shelfItems = phone ? BOOKS : ITEMS;
+  const facesOut = (i) => i === active;
+
   // Width every shelf item currently takes. A divider's width includes the space
   // before it, widened when the previous section is too narrow for that section's tab.
   const widths = [];
   const dividerGaps = {};
   let sectionStart = 0;
   let dividerCount = 0;
-  ITEMS.forEach((item, k) => {
+  shelfItems.forEach((item, k) => {
     if (!item.divider) {
       const i = BOOKS.indexOf(item);
-      widths.push(i === active ? sized[i].cw : sized[i].t);
+      widths.push(facesOut(i) ? sized[i].cw : sized[i].t);
       return;
     }
     let ml = 0;
@@ -203,16 +272,16 @@ export const Shelf = () => {
     sectionStart = k;
     dividerCount += 1;
   });
-  const activeItem = ITEMS.indexOf(BOOKS[active]);
+  const activeItem = shelfItems.indexOf(BOOKS[active]);
   let activeCenter = widths[activeItem] / 2;
   for (let k = 0; k < activeItem; k++) activeCenter += widths[k] + gap;
-  const total = widths.reduce((sum, w) => sum + w, 0) + gap * (ITEMS.length - 1);
+  const total = widths.reduce((sum, w) => sum + w, 0) + gap * (shelfItems.length - 1);
 
   // Center the face-out book, but never scroll past either end of the shelf.
-  const edge = Math.round(clamp(vp.w * 0.035, 12, 56));
+  const edge = Math.round(phone ? vp.w * 0.07 : clamp(vp.w * 0.035, 12, 56));
+  const minX = vp.w - edge - total;
   const neighbor = sized[clamp(active + Math.sign(frac), 0, LAST)];
   const centered = vp.w / 2 - activeCenter - frac * (neighbor.t + gap);
-  const minX = vp.w - edge - total;
   const target = minX > edge ? (vp.w - total) / 2 : clamp(centered, minX, edge);
 
   const x = useSpring(target, { stiffness: 140, damping: 26, mass: 0.9 });
@@ -258,7 +327,7 @@ export const Shelf = () => {
       const at = Math.round(indexRef.current);
       if (e.key === "ArrowRight") goTo(at + 1);
       if (e.key === "ArrowLeft") goTo(at - 1);
-      if (e.key === "Enter" && BOOKS[at].spreads) setSelected(at);
+      if (e.key === "Enter" && BOOKS[at].pages) setSelected(at);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -266,10 +335,11 @@ export const Shelf = () => {
 
   useEffect(() => () => clearTimeout(snapTimer.current), []);
 
-  // Clicking turns a book face-out; the About Me books also open.
+  // Clicking turns a book face-out, and the About Me books open right away.
   const handleClick = (i) => {
+    if (dragged.current > 8) return; // that was a swipe, not a tap
     goTo(i);
-    if (BOOKS[i].spreads) setSelected(i);
+    if (BOOKS[i].pages) setSelected(i);
   };
 
   return (
@@ -278,11 +348,15 @@ export const Shelf = () => {
       bg={tint(BOOKS[active].color)}
       onTouchStart={(e) => {
         touchX.current = e.touches[0].clientX;
+        dragged.current = 0;
       }}
       onTouchMove={(e) => {
         if (touchX.current === null) return;
         const cx = e.touches[0].clientX;
-        moveBy((touchX.current - cx) / 70);
+        const dx = touchX.current - cx;
+        dragged.current += Math.abs(dx);
+        // About one spine's width of swipe moves one book.
+        moveBy(dx / (phone ? 55 : 70));
         touchX.current = cx;
       }}
       onTouchEnd={() => {
@@ -296,8 +370,15 @@ export const Shelf = () => {
       </Plank>
       <Lower h={plankBottom} />
 
+      {phone && (
+        <Masthead top={Math.round(vp.h * 0.09)} inset={edge}>
+          <Kicker>The library of</Kicker>
+          <MastTitle>Brian K. Mason</MastTitle>
+        </Masthead>
+      )}
+
       <Row gap={gap} pb={booksBottom} style={{ x }}>
-        {ITEMS.map((item, k) => {
+        {shelfItems.map((item, k) => {
           if (item.divider) {
             return (
               <Divider key={`divider-${item.divider}`} w={divider.w} h={divider.h} ml={dividerGaps[k]}>
@@ -319,7 +400,6 @@ export const Shelf = () => {
           const book = item;
           const i = BOOKS.indexOf(book);
           const { h, t, cw } = sized[i];
-          const isActive = i === active;
           return (
             <Slot
               key={book.title}
@@ -327,7 +407,7 @@ export const Shelf = () => {
               role="button"
               aria-label={book.title}
               initial={false}
-              animate={{ width: isActive ? cw : t }}
+              animate={{ width: facesOut(i) ? cw : t }}
               transition={TURN}
               onClick={() => handleClick(i)}
             >
@@ -337,15 +417,14 @@ export const Shelf = () => {
                   initial={false}
                   style={{ originX: 0.5, originY: 0.5, originZ: -t / 2 }}
                   animate={{
-                    rotateY: isActive ? 0 : 90,
-                    z: isActive ? 0 : -(cw - t) / 2,
+                    rotateY: facesOut(i) ? 0 : 90,
+                    z: facesOut(i) ? 0 : -(cw - t) / 2,
                   }}
                   transition={TURN}
                 >
-                  {/* Only load covers near the face-out book; the next ones are ready before they turn */}
                   <Front
                     color={book.color}
-                    img={Math.abs(i - active) <= 2 ? book.cover : undefined}
+                    img={coversShown.has(i) ? book.cover : undefined}
                     pad={Math.round(cw * 0.12)}
                   >
                     {!book.cover && <CoverFace book={book} scale={cw / 300} />}
@@ -361,7 +440,7 @@ export const Shelf = () => {
                       {book.title}
                     </SpineTitle>
                     <SpineAuthor size={clamp(Math.round(t * 0.17), 8, 13)}>
-                      {book.author}
+                      {phone ? lastName(book.author) : book.author}
                     </SpineAuthor>
                   </SpineFace>
                 </Box>
@@ -370,6 +449,37 @@ export const Shelf = () => {
           );
         })}
       </Row>
+
+      {phone && (
+        <AnimatePresence mode="wait">
+          <Details
+            key={BOOKS[active].title}
+            inset={edge}
+            // Hang just below the shelf, so the panel can never run into it.
+            top={vp.h - plankBottom + Math.round(18 + 10 * s)}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.22 }}
+          >
+            <Kicker>The {ordinal(active + 1)} volume</Kicker>
+            <DetailTitle>{BOOKS[active].title}</DetailTitle>
+            {BOOKS[active].pages ? (
+              <DetailNote>Tap to open</DetailNote>
+            ) : (
+              <>
+                <DetailAuthor>{BOOKS[active].author}</DetailAuthor>
+                <Rating>
+                  My rating
+                  <RatingValue unrated={!BOOKS[active].rating}>
+                    {BOOKS[active].rating ? `${BOOKS[active].rating}/10` : "Unrated"}
+                  </RatingValue>
+                </Rating>
+              </>
+            )}
+          </Details>
+        </AnimatePresence>
+      )}
 
       <AnimatePresence>
         {selected !== null && (

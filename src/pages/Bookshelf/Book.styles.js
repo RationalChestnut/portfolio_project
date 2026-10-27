@@ -19,6 +19,12 @@ export const Backdrop = styled(motion.div)`
   overflow: auto;
   background: rgba(221, 215, 203, 0.94);
   backdrop-filter: blur(3px);
+  /* No scrollbar gutter, so the book stays centered (scrolling still works) */
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   ${narrow} {
     align-items: flex-start;
@@ -390,6 +396,55 @@ export const OpenerRule = styled.div`
   opacity: 0.6;
 `;
 
+/* Tighter type for pages with long lists, so a full year of goals fits one page */
+export const Compact = styled.div`
+  font-size: 0.92em;
+  line-height: 1.45;
+
+  & h3 {
+    margin-top: 1.15em;
+  }
+
+  & h3:first-child {
+    margin-top: 0;
+  }
+
+  & li {
+    line-height: 1.4;
+    margin-bottom: 0.15em;
+  }
+`;
+
+/* Small link in a page's bottom-left corner, level with the page number */
+export const PageNote = styled.a`
+  position: absolute;
+  bottom: 2.8em;
+  left: 6.6em;
+  z-index: 2;
+  font-size: 0.72em;
+  letter-spacing: 0.08em;
+  color: ${muted};
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: ${accent};
+  }
+
+  ${narrow} {
+    position: static;
+    display: inline-block;
+    margin-top: 2em;
+  }
+`;
+
+/* Check mark after a goal that's been reached */
+export const Done = styled.span`
+  margin-left: 0.45em;
+  font-size: 0.9em;
+  color: #4f7a52;
+`;
+
 /* Placeholder where a list has nothing in it yet */
 export const Empty = styled.p`
   margin: 4em 0 0;
@@ -423,57 +478,235 @@ export const QuoteSource = styled.cite`
   color: ${muted};
 `;
 
-/* Table of contents line: title, dotted leader, date */
-export const ContentsItem = styled.a`
-  display: flex;
-  align-items: baseline;
-  gap: 0.6em;
-  margin-bottom: 0.7em;
-  color: ${ink};
-  text-decoration: none;
-
-  &:hover {
-    color: ${accent};
-  }
-`;
-
 export const Leader = styled.span`
   flex: 1;
   border-bottom: 1px dotted ${muted};
   transform: translateY(-0.3em);
 `;
 
-/* Photo collage: prints with white borders, set slightly askew */
-export const Album = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1.6em 1.4em;
-  margin-top: 0.6em;
+/* ---------- Flowing text across pages ---------- */
+
+// Space between the hidden columns; any value works since one column shows at a time.
+export const FLOW_GAP = 10;
+
+/* A page-sized window onto one column of a flowing piece */
+export const FlowWindow = styled.div`
+  height: 100%;
+  overflow: hidden;
 `;
 
-export const Snapshot = styled.figure`
+/* The piece laid out as page-sized columns; each extra column is the next page */
+export const Flow = styled.div`
+  height: 100%;
+  column-count: 1;
+  column-gap: ${FLOW_GAP}em;
+  column-fill: auto;
+  line-height: 1.7;
+
+  /* Keep headings with the text below them; long list items may run onto the next page */
+  & h3,
+  & h4 {
+    break-after: avoid;
+  }
+`;
+
+/* Off-screen copy of a page, used only to count how many pages a piece needs */
+export const MeasurePage = styled(Page)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  visibility: hidden;
+  pointer-events: none;
+`;
+
+/* ---------- Writing ---------- */
+
+export const Prose = styled.p`
+  margin: 0 0 0.85em;
+  text-align: justify;
+`;
+
+export const SubHead = styled.h4`
+  margin: 1.4em 0 0.35em;
+  font-size: 1.08em;
+  font-style: italic;
+  font-weight: 400;
+  color: #3b332b;
+`;
+
+/* Bulleted list; nested lists step in */
+export const Bullets = styled.ul`
+  margin: 0 0 0.85em;
+  padding-left: 1.3em;
+  list-style: none;
+
+  & & {
+    margin: 0.2em 0 0.3em;
+  }
+
+  & > li {
+    position: relative;
+    margin-bottom: 0.3em;
+  }
+
+  & > li::before {
+    content: "–";
+    position: absolute;
+    left: -1.1em;
+    color: ${muted};
+  }
+`;
+
+/* One line of verse */
+export const Verse = styled.p`
+  margin: 0 0 0.25em;
+  text-align: left;
+`;
+
+/* "Originally published on Substack" after a piece */
+export const SourceNote = styled.p`
+  margin: 2em 0 0;
+  font-size: 0.82em;
+  font-style: italic;
+  color: ${muted};
+`;
+
+export const OpenerDate = styled.div`
+  margin-top: 1.6em;
+  font-size: 0.95em;
+  color: #4a4038;
+`;
+
+export const OpenerSub = styled.div`
+  max-width: 22em;
+  margin-top: 0.5em;
+  font-style: italic;
+  color: ${muted};
+`;
+
+/* Contents page: grouped entries that jump to a piece */
+export const ContentsGroup = styled.h3`
+  margin: 1.6em 0 0.6em;
+  font-size: 0.74em;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #6e6155;
+
+  &:first-child {
+    margin-top: 0;
+  }
+`;
+
+export const ContentsEntry = styled.button`
+  display: flex;
+  align-items: baseline;
+  gap: 0.6em;
+  width: 100%;
+  margin: 0 0 0.75em;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  color: ${ink};
+
+  &:hover {
+    color: ${accent};
+  }
+`;
+
+export const ContentsMeta = styled.span`
+  display: block;
+  font-size: 0.8em;
+  font-style: italic;
+  color: ${muted};
+`;
+
+/* ---------- Scrapbook (photo album) ---------- */
+
+export const Scrapbook = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.8em;
+  padding-top: 0.6em;
+`;
+
+/* Season name, written by hand */
+export const SeasonTitle = styled.div`
+  margin: -0.3em 0 0.1em 0.2em;
+  font-family: "Caveat", cursive;
+  font-size: 2.9em;
+  font-weight: 500;
+  line-height: 1;
+  color: #3b332b;
+  transform: rotate(-2deg);
+  transform-origin: left center;
+`;
+
+export const PrintRow = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.6em;
+`;
+
+/* A photo print with a white border, set slightly askew */
+export const Print = styled.figure`
   position: relative;
-  width: ${({ wide }) => (wide ? "70%" : "44%")};
+  flex: 0 0 auto;
+  width: ${({ width }) => width}%;
   margin: 0;
-  padding: 0.55em 0.55em 1.8em;
+  padding: 0.45em;
+  box-sizing: border-box;
   background: #fbf8f1;
-  box-shadow: 0 1px 2px rgba(60, 45, 25, 0.15),
-    0 6px 14px -8px rgba(60, 45, 25, 0.35);
+  box-shadow: 0 1px 2px rgba(60, 45, 25, 0.18),
+    0 8px 16px -10px rgba(60, 45, 25, 0.45);
   transform: rotate(${({ tilt }) => tilt}deg);
 `;
 
-export const SnapshotImage = styled.img`
+export const PrintImage = styled.img`
   display: block;
   width: 100%;
-  aspect-ratio: 4 / 5;
-  object-fit: cover;
+  height: auto;
 `;
 
-export const SnapshotCaption = styled.figcaption`
-  margin-top: 0.6em;
-  font-size: 0.82em;
-  font-style: italic;
-  text-align: center;
-  color: #4a4038;
+/* Strip of washi tape holding a print to the page */
+export const Tape = styled.span`
+  position: absolute;
+  top: -0.7em;
+  left: 50%;
+  width: 38%;
+  height: 1.3em;
+  transform: translateX(-50%) rotate(${({ tilt }) => tilt}deg);
+  background: repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.18) 0 0.3em,
+      rgba(255, 255, 255, 0) 0.3em 0.6em
+    ),
+    ${({ color }) => color};
+  box-shadow: 0 1px 2px rgba(60, 45, 25, 0.15);
+  clip-path: polygon(
+    2% 0, 98% 0, 100% 20%, 97% 40%, 100% 60%, 97% 80%, 100% 100%,
+    2% 100%, 0 80%, 3% 60%, 0 40%, 3% 20%
+  );
+`;
+
+/* Paper photo corner; `at` is top-left, top-right, bottom-left or bottom-right */
+export const PhotoCorner = styled.span`
+  position: absolute;
+  width: 1.5em;
+  height: 1.5em;
+  ${({ at }) => (at.startsWith("top") ? "top: -0.25em;" : "bottom: -0.25em;")}
+  ${({ at }) => (at.endsWith("left") ? "left: -0.25em;" : "right: -0.25em;")}
+  background: linear-gradient(
+    ${({ at }) =>
+      ({ "top-left": 135, "top-right": 225, "bottom-left": 45, "bottom-right": 315 })[at]}deg,
+    #4a3c31 50%,
+    transparent 50%
+  );
+  opacity: 0.88;
 `;
