@@ -1,4 +1,5 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import {
   Backdrop,
   CloseButton,
@@ -9,6 +10,8 @@ import {
   Gutter,
   Leaf,
   LeafFace,
+  Lightbox,
+  LightboxImage,
   MeasurePage,
   Page,
   PageTurn,
@@ -74,6 +77,7 @@ const BookPage = ({ side, page, number, context }) => {
 export const OpenBook = ({ book, vp, onClose }) => {
   const [at, setAt] = useState(0); // spread index
   const [turn, setTurn] = useState(null); // { dir: 1 | -1, to }
+  const [photo, setPhoto] = useState(null); // { src, alt } of a photo opened full size
   const stacked = vp.w < 760;
 
   // A 3:2 spread that fills most of the window.
@@ -121,7 +125,20 @@ export const OpenBook = ({ book, vp, onClose }) => {
       setTurn(null);
       setAt(Math.floor(indexOf(id) / 2));
     },
+    showPhoto: setPhoto,
   };
+
+  // While a photo is open, keys belong to it: Escape closes the photo, not the
+  // book, and the arrows don't turn pages behind it.
+  useEffect(() => {
+    if (!photo) return undefined;
+    const onKey = (e) => {
+      e.stopImmediatePropagation();
+      if (e.key === "Escape") setPhoto(null);
+    };
+    window.addEventListener("keydown", onKey, true);
+    return () => window.removeEventListener("keydown", onKey, true);
+  }, [photo]);
 
   const go = (dir) => {
     const to = at + dir;
@@ -249,6 +266,30 @@ export const OpenBook = ({ book, vp, onClose }) => {
         <span aria-hidden>×</span>
         {stacked && " Close"}
       </CloseButton>
+
+      <AnimatePresence>
+        {photo && (
+          <Lightbox
+            key={photo.src}
+            role="dialog"
+            aria-label={photo.alt}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => setPhoto(null)}
+          >
+            <LightboxImage
+              src={photo.src}
+              alt={photo.alt}
+              initial={{ scale: 0.96 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.96 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+            />
+          </Lightbox>
+        )}
+      </AnimatePresence>
     </>
   );
 };

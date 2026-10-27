@@ -344,8 +344,9 @@ const albumChunks = (photos) => {
 };
 
 // Two prints per row (one per row when a page has just one or two), sized so the
-// whole page fits; a few use photo corners instead of tape.
-const albumPage = (photos, title, seasonName, startIndex) => {
+// whole page fits; a few use photo corners instead of tape. Clicking a print
+// opens the photo full size.
+const albumPage = (photos, title, seasonName, startIndex, showPhoto) => {
   const perRow = photos.length <= 2 ? 1 : 2;
   const rows = [];
   for (let i = 0; i < photos.length; i += perRow) rows.push(photos.slice(i, i + perRow));
@@ -367,14 +368,25 @@ const albumPage = (photos, title, seasonName, startIndex) => {
           {row.map((photo) => {
             const k = n++;
             const width = ((natural[r] * fit * photo.ratio + 0.9) / PAGE_W) * 100;
+            const alt = `${seasonName} photo ${k - startIndex + 1}`;
+            const open = () => showPhoto({ src: photo.src, alt });
             return (
-              <Print key={photo.src} width={width} tilt={TILTS[k % TILTS.length]}>
+              <Print
+                key={photo.src}
+                width={width}
+                tilt={TILTS[k % TILTS.length]}
+                role="button"
+                tabIndex={0}
+                aria-label={`Open ${alt}`}
+                onClick={open}
+                onKeyDown={(e) => e.key === "Enter" && open()}
+              >
                 {k % 3 === 2 ? (
                   CORNERS.map((at) => <PhotoCorner key={at} at={at} />)
                 ) : (
                   <Tape color={TAPES[k % TAPES.length]} tilt={k % 2 ? 3 : -2} />
                 )}
-                <PrintImage src={photo.src} alt={`${seasonName} photo ${k - startIndex + 1}`} loading="lazy" />
+                <PrintImage src={photo.src} alt={alt} loading="lazy" />
               </Print>
             );
           })}
@@ -387,10 +399,11 @@ const albumPage = (photos, title, seasonName, startIndex) => {
 const albumPages = ALBUM.flatMap(({ season: name, photos }) => {
   let start = 0;
   return albumChunks(photos).map((chunk, c) => {
+    const first = start;
     const page = {
       title: c === 0 ? name : undefined,
       head: name,
-      body: albumPage(chunk, c === 0 ? name : null, name, start),
+      body: ({ showPhoto }) => albumPage(chunk, c === 0 ? name : null, name, first, showPhoto),
     };
     start += chunk.length;
     return page;

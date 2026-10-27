@@ -695,6 +695,39 @@ export const Print = styled.figure`
   box-shadow: 0 1px 2px rgba(60, 45, 25, 0.18),
     0 8px 16px -10px rgba(60, 45, 25, 0.45);
   transform: rotate(${({ tilt }) => tilt}deg);
+  cursor: zoom-in;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+
+  &:focus-visible {
+    box-shadow: 0 0 0 1px ${ink}, 0 8px 16px -10px rgba(60, 45, 25, 0.45);
+  }
+`;
+
+/* A photo opened from the album, over everything; a tap anywhere closes it */
+export const Lightbox = styled(motion.div)`
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  background: rgba(28, 23, 18, 0.86);
+  cursor: zoom-out;
+  -webkit-tap-highlight-color: transparent;
+`;
+
+export const LightboxImage = styled(motion.img)`
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  box-sizing: border-box;
+  padding: 10px;
+  background: #fbf8f1;
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.6);
 `;
 
 export const PrintImage = styled.img`
