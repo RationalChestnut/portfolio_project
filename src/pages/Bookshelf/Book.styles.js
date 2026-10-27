@@ -1,0 +1,479 @@
+import styled from "styled-components";
+import { motion } from "framer-motion";
+import { cloth, NOISE } from "./Shelf.styles";
+
+const garamond = `"EB Garamond", Garamond, "Times New Roman", serif`;
+const ink = "#2a241f";
+const muted = "#8a7f72";
+const accent = "#7a2416";
+const narrow = "@media (max-width: 760px)";
+
+/* Light, slightly blurred room behind the open book */
+export const Backdrop = styled(motion.div)`
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  background: rgba(221, 215, 203, 0.94);
+  backdrop-filter: blur(3px);
+
+  ${narrow} {
+    align-items: flex-start;
+  }
+`;
+
+export const Scene = styled.div`
+  position: relative;
+  width: ${({ w }) => w}px;
+  height: ${({ h }) => h}px;
+  perspective: 3000px;
+
+  ${narrow} {
+    width: 94vw;
+    height: auto;
+    margin: 3vh 0;
+  }
+`;
+
+/* The open two-page spread; every size inside is in em off `base` */
+export const Spread = styled(motion.div)`
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  font-family: ${garamond};
+  font-size: ${({ base }) => base}px;
+  color: ${ink};
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px rgba(90, 70, 40, 0.08), -3px 0 0 #ece5d7,
+    -4px 1px 0 #d9cfbe, 3px 0 0 #ece5d7, 4px 1px 0 #d9cfbe,
+    0 30px 60px -20px rgba(60, 45, 25, 0.35);
+
+  ${narrow} {
+    flex-direction: column;
+    font-size: 16px;
+  }
+`;
+
+const pageShade = (dir) => `
+  radial-gradient(ellipse 30% 40% at ${dir === "right" ? "100%" : "0%"} 0%, rgba(255, 240, 233, 0.6), transparent 70%),
+  linear-gradient(to ${dir}, #f3eee2 0%, #f7f2e8 55%, #f3ece0 86%, #e6dcca 97%, #d9cdb8 100%)
+`;
+
+export const Page = styled.section`
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 8.2em 4.75em 6em;
+  overflow: auto;
+  background: ${({ side }) => pageShade(side === "left" ? "right" : "left")};
+  border-radius: ${({ side }) => (side === "left" ? "3px 0 0 3px" : "0 3px 3px 0")};
+
+  /* Media block must precede the ::after block, or it gets scoped to ::after */
+  ${narrow} {
+    padding: 4.6em 1.5em 4.4em;
+    border-radius: 3px;
+    background: #f6f1e6;
+
+    & + & {
+      border-top: 1px solid #e3dac9;
+    }
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: ${NOISE};
+    opacity: 0.05;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+  }
+`;
+
+/* Small letterspaced title at the top of each page */
+export const RunningHead = styled.div`
+  position: absolute;
+  top: 4.8em;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.68em;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: ${muted};
+
+  ${narrow} {
+    top: 2.6em;
+  }
+`;
+
+/* Page number */
+export const Folio = styled.div`
+  position: absolute;
+  bottom: 2.6em;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.78em;
+  color: ${muted};
+`;
+
+/* 75% of the text block is ~57% of the full page, as in the mockup */
+export const Plate = styled.figure`
+  width: 75%;
+  margin: 1.2em auto 0;
+  text-align: center;
+
+  ${narrow} {
+    width: 78%;
+    margin-top: 0.5em;
+  }
+`;
+
+export const PlateFrame = styled.div`
+  padding: 0.7em;
+  background: #fbf8f1;
+  border: 1px solid #d8cdb9;
+  box-shadow: 0 1px 2px rgba(60, 45, 25, 0.08);
+`;
+
+export const PlateImage = styled.img`
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+`;
+
+export const Caption = styled.figcaption`
+  margin-top: 1.9em;
+  font-size: 1.1em;
+  font-style: italic;
+  color: #3b332b;
+`;
+
+export const Body = styled.div`
+  line-height: 1.75;
+`;
+
+/* Opening paragraph, justified, with a drop cap */
+export const Lead = styled.p`
+  margin: 0 0 1em;
+  text-align: justify;
+
+  &::first-letter {
+    float: left;
+    font-size: 4.35em;
+    line-height: 0.82;
+    padding: 0.06em 0.08em 0 0;
+    color: #6b5444;
+  }
+`;
+
+/* Everything after the lead clears the drop cap, even when the lead is one line */
+export const Indent = styled.p`
+  clear: both;
+  margin: 0 0 0.7em;
+  padding-left: 1.8em;
+`;
+
+/* List numbered i. ii. iii. in italics */
+export const Goals = styled.ol`
+  list-style: none;
+  counter-reset: goal;
+  margin: 0 0 1.1em;
+  padding-left: 1.8em;
+
+  & li {
+    counter-increment: goal;
+    position: relative;
+    padding-left: 2.1em;
+    margin-bottom: 0.25em;
+    line-height: 1.6;
+  }
+
+  & li::before {
+    content: counter(goal, lower-roman) ".";
+    position: absolute;
+    left: 0;
+    font-style: italic;
+    color: ${muted};
+  }
+`;
+
+/* Centered * * * section break */
+export const Asterism = styled.div`
+  clear: both;
+  margin: 1.4em 0 2.2em;
+  padding-left: 1.6em;
+  text-align: center;
+  font-size: 0.8em;
+  letter-spacing: 1.6em;
+  color: ${muted};
+`;
+
+export const SectionHead = styled.h3`
+  clear: both;
+  margin: 1.7em 0 0.45em;
+  font-weight: 400;
+  font-size: 0.74em;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #6e6155;
+`;
+
+export const Para = styled.p`
+  margin: 0 0 0.9em;
+`;
+
+export const BookLink = styled.a`
+  color: ${accent};
+  text-decoration: none;
+  border-bottom: 1px solid rgba(122, 36, 22, 0.35);
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-bottom-color: ${accent};
+  }
+`;
+
+/* Crease down the middle of the spread */
+export const Gutter = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 6%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    rgba(120, 95, 60, 0) 0%,
+    rgba(120, 95, 60, 0.1) 46%,
+    rgba(90, 70, 40, 0.22) 50%,
+    rgba(120, 95, 60, 0.1) 54%,
+    rgba(120, 95, 60, 0) 100%
+  );
+
+  ${narrow} {
+    display: none;
+  }
+`;
+
+/* Front cover over the right page, hinged at the spine; swings open to the left */
+export const Cover = styled(motion.div)`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 50%;
+  box-sizing: border-box;
+  padding: 9% 7% 7%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+  z-index: 6;
+  pointer-events: none;
+  transform-origin: left center;
+  backface-visibility: hidden;
+  background-color: ${({ color }) => color};
+  border-radius: 0 4px 4px 0;
+  box-shadow: inset 14px 0 10px -8px rgba(0, 0, 0, 0.3),
+    0 30px 60px -20px rgba(40, 30, 15, 0.45);
+
+  ${narrow} {
+    display: none;
+  }
+
+  ${cloth}
+`;
+
+/* ---------- Page turning ---------- */
+
+/* The leaf that turns over at the spine; one face per side of the paper */
+export const Leaf = styled(motion.div)`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: ${({ side }) => (side === "right" ? "50%" : "0")};
+  width: 50%;
+  z-index: 4;
+  transform-origin: ${({ side }) => (side === "right" ? "left" : "right")} center;
+  transform-style: preserve-3d;
+
+  ${narrow} {
+    display: none;
+  }
+`;
+
+export const LeafFace = styled.div`
+  position: absolute;
+  inset: 0;
+  display: flex;
+  backface-visibility: hidden;
+  box-shadow: 0 0 24px -6px rgba(60, 45, 25, 0.35);
+  ${({ back }) => back && "transform: rotateY(180deg);"}
+`;
+
+/* "Next" / "Back" links in the bottom corners, level with the page numbers */
+export const PageTurn = styled.button`
+  position: absolute;
+  bottom: 2.8em;
+  ${({ side }) => side}: 6.6em;
+  z-index: 3;
+  padding: 0.3em 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: ${garamond};
+  font-size: 0.72em;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: ${muted};
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: ${accent};
+  }
+
+  ${narrow} {
+    display: none;
+  }
+`;
+
+/* ---------- Page content ---------- */
+
+/* Title page for a chapter or a book: small line, large title, short rule */
+export const Opener = styled.div`
+  height: 100%;
+  margin-top: -2em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  ${narrow} {
+    height: auto;
+    margin-top: 0;
+    padding: 3em 0;
+  }
+`;
+
+export const OpenerKicker = styled.div`
+  margin-bottom: 1.6em;
+  font-size: 0.72em;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: ${muted};
+`;
+
+export const OpenerTitle = styled.h2`
+  margin: 0;
+  font-size: 2.6em;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.1;
+  color: ${ink};
+`;
+
+export const OpenerRule = styled.div`
+  width: 2.4em;
+  height: 1px;
+  margin-top: 1.8em;
+  background: ${muted};
+  opacity: 0.6;
+`;
+
+/* Placeholder where a list has nothing in it yet */
+export const Empty = styled.p`
+  margin: 4em 0 0;
+  text-align: center;
+  font-style: italic;
+  color: ${muted};
+`;
+
+/* Inline placeholder under a heading */
+export const Pending = styled.p`
+  margin: 0 0 0.9em;
+  font-style: italic;
+  color: ${muted};
+`;
+
+export const Quote = styled.blockquote`
+  margin: 0 0 1.6em;
+  padding: 0;
+  font-size: 1.08em;
+  font-style: italic;
+  line-height: 1.6;
+`;
+
+export const QuoteSource = styled.cite`
+  display: block;
+  margin-top: 0.4em;
+  font-size: 0.72em;
+  font-style: normal;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: ${muted};
+`;
+
+/* Table of contents line: title, dotted leader, date */
+export const ContentsItem = styled.a`
+  display: flex;
+  align-items: baseline;
+  gap: 0.6em;
+  margin-bottom: 0.7em;
+  color: ${ink};
+  text-decoration: none;
+
+  &:hover {
+    color: ${accent};
+  }
+`;
+
+export const Leader = styled.span`
+  flex: 1;
+  border-bottom: 1px dotted ${muted};
+  transform: translateY(-0.3em);
+`;
+
+/* Photo collage: prints with white borders, set slightly askew */
+export const Album = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.6em 1.4em;
+  margin-top: 0.6em;
+`;
+
+export const Snapshot = styled.figure`
+  position: relative;
+  width: ${({ wide }) => (wide ? "70%" : "44%")};
+  margin: 0;
+  padding: 0.55em 0.55em 1.8em;
+  background: #fbf8f1;
+  box-shadow: 0 1px 2px rgba(60, 45, 25, 0.15),
+    0 6px 14px -8px rgba(60, 45, 25, 0.35);
+  transform: rotate(${({ tilt }) => tilt}deg);
+`;
+
+export const SnapshotImage = styled.img`
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+`;
+
+export const SnapshotCaption = styled.figcaption`
+  margin-top: 0.6em;
+  font-size: 0.82em;
+  font-style: italic;
+  text-align: center;
+  color: #4a4038;
+`;
