@@ -1,14 +1,11 @@
-import React, { createContext, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence } from "framer-motion";
+import React, { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import { MdColorize } from "react-icons/md";
-import { OpenBook } from "./Book";
 import {
   CloseButton,
   ColorField,
   ColorPanel,
   CustomSwatch,
   DropperButton,
-  Empty,
   FormRow,
   FormStatus,
   HexInput,
@@ -18,7 +15,6 @@ import {
   JournalTitle,
   Lightbox,
   NOTE_COLORS,
-  NoteBoard,
   NoteCount,
   NoteDate,
   NoteDraft,
@@ -48,8 +44,7 @@ const FIELDS = "id,body,name,color,created_at";
 
 export const NOTE_MAX = 2000;
 const NAME_MAX = 40;
-const PER_PAGE = 6;
-const TILTS = [-2.4, 1.8, -1.2, 2.6, -1.9, 1.1];
+export const TILTS = [-2.4, 1.8, -1.2, 2.6, -1.9, 1.1];
 const EMPTY_DRAFT = { body: "", name: "", color: NOTE_COLORS[0] };
 
 const request = async (query, options = {}) => {
@@ -65,11 +60,45 @@ const request = async (query, options = {}) => {
   return data;
 };
 
-// Kept between openings, so the book opens with its notes and an unfinished note survives closing it.
-let cachedNotes = null;
-let savedDraft = EMPTY_DRAFT;
+// ---- The notes, shared by everything that shows them ----
 
-const Journal = createContext(null);
+let store = { notes: null, failed: false }; // notes: newest first, null until loaded
+const listeners = new Set();
+const setStore = (next) => {
+  store = { ...store, ...next };
+  listeners.forEach((listener) => listener());
+};
+const subscribe = (listener) => {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+};
+
+let loading = null;
+const load = () => {
+  if (!loading) {
+    loading = request(`select=${FIELDS}&order=created_at.desc&limit=600`)
+      .then((notes) => setStore({ notes, failed: false }))
+      .catch(() => !store.notes && setStore({ failed: true }))
+      .finally(() => {
+        loading = null;
+      });
+  }
+  return loading;
+};
+
+export const addNote = (note) => setStore({ notes: [note, ...(store.notes || [])], failed: false });
+
+// { notes, failed }, loading the notes the first time it's used.
+export const useNotes = () => {
+  const snapshot = useSyncExternalStore(subscribe, () => store);
+  useEffect(() => {
+    if (!store.notes) load();
+  }, []);
+  return snapshot;
+};
+
+// An unfinished note survives closing the form.
+let savedDraft = EMPTY_DRAFT;
 
 // ---- Colors ----
 
@@ -103,7 +132,7 @@ const parseColor = (text) => {
 };
 
 // Dark notes are written in light ink, whichever reads better.
-const isDark = (hex) => {
+export const isDark = (hex) => {
   const [r, g, b] = hexToRgb(hex).map((v) => {
     const c = v / 255;
     return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
@@ -231,25 +260,46 @@ const ColorPicker = ({ color, onChange }) => {
 
 // ---- Writing a note ----
 
-const NoteForm = ({ turnTo }) => {
-  const { draft, setDraft, post, status } = useContext(Journal);
+// The form for a new note, written on a sticky note of its own. `onPosted` gets
+// the saved note.
+export const NoteForm = ({ onPosted, autoFocus }) => {
+  const [draft, setDraft] = useState(savedDraft);
+  const [status, setStatus] = useState({ state: "idle" });
   const [picking, setPicking] = useState(false);
   const sending = status.state === "sending";
   const ready = draft.body.trim().length > 0 && !sending;
   const left = NOTE_MAX - draft.body.length;
   const custom = !NOTE_COLORS.includes(draft.color);
   const setColor = (color) => setDraft((current) => ({ ...current, color }));
-  const submit = (e) => {
+
+  useEffect(() => {
+    savedDraft = draft;
+  }, [draft]);
+
+  const submit = async (e) => {
     e.preventDefault();
-    if (ready) post(turnTo);
+    if (!ready) return;
+    setStatus({ state: "sending" });
+    try {
+      const [note] = await request(`select=${FIELDS}`, {
+        method: "POST",
+        headers: { Prefer: "return=representation" },
+        body: JSON.stringify({ body: draft.body.trim(), name: draft.name.trim() || null, color: draft.color }),
+      });
+      addNote(note);
+      savedDraft = { ...EMPTY_DRAFT, color: draft.color };
+      onPosted(note);
+    } catch (error) {
+      setStatus({ state: "error", message: error.message });
+    }
   };
 
   return (
     <JournalForm onSubmit={submit}>
       <JournalTitle>Leave a note</JournalTitle>
       <JournalIntro>
-        Say hello, recommend a book, or leave a thought for whoever comes next. Your note stays
-        stuck in this journal for everyone to read.
+        Say hello, recommend a book, or leave a thought for whoever comes next. Your note gets
+        pinned to the board for everyone to read.
       </JournalIntro>
 
       <NoteDraft color={draft.color} $dark={isDark(draft.color)}>
@@ -257,6 +307,7 @@ const NoteForm = ({ turnTo }) => {
           aria-label="Your note"
           placeholder="Write your note…"
           maxLength={NOTE_MAX}
+          autoFocus={autoFocus}
           value={draft.body}
           onChange={(e) => setDraft({ ...draft, body: e.target.value })}
           onKeyDown={(e) => {
@@ -296,7 +347,7 @@ const NoteForm = ({ turnTo }) => {
             type="button"
             role="radio"
             aria-checked={custom}
-            aria-expanded={picking}
+            $open={picking}
             aria-label="Pick your own color"
             title="Pick your own color"
             color={custom ? draft.color : undefined}
@@ -304,7 +355,7 @@ const NoteForm = ({ turnTo }) => {
           />
         </Swatches>
         <StickButton type="submit" disabled={!ready}>
-          {sending ? "Sticking…" : "Stick it in"}
+          {sending ? "Pinning…" : "Pin it up"}
         </StickButton>
       </FormRow>
 
@@ -312,13 +363,12 @@ const NoteForm = ({ turnTo }) => {
 
       <FormStatus role="status" error={status.state === "error"}>
         {status.state === "error" && status.message}
-        {status.state === "stuck" && "Stuck! Your note is in the journal."}
       </FormStatus>
     </JournalForm>
   );
 };
 
-// ---- The notes ----
+// ---- Reading notes ----
 
 // Shorter notes are written larger.
 const noteSize = (text) => (text.length <= 50 ? 1.4 : text.length <= 100 ? 1.18 : 1.02);
@@ -336,9 +386,8 @@ const Signature = ({ note }) => (
   </NoteSign>
 );
 
-// A note too long for its square fades out, with a link to read the rest.
-const Note = ({ note, fresh }) => {
-  const { openNote } = useContext(Journal);
+// A note at reading size. One too long for its square fades out, with a link to read the rest.
+export const Note = ({ note, fresh, onOpen }) => {
   const textRef = useRef(null);
   const [clipped, setClipped] = useState(false);
 
@@ -357,7 +406,7 @@ const Note = ({ note, fresh }) => {
       color={note.color}
       $dark={isDark(note.color)}
       style={{ rotate: TILTS[note.id % TILTS.length] }}
-      // A note that was just posted is pressed onto the page.
+      // A note that was just posted is pressed onto the board.
       initial={fresh ? { opacity: 0, scale: 1.18, y: -12 } : false}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
@@ -366,7 +415,7 @@ const Note = ({ note, fresh }) => {
         {note.body}
       </NoteText>
       {clipped && (
-        <SeeMore type="button" onClick={() => openNote(note)}>
+        <SeeMore type="button" onClick={() => onOpen(note)}>
           See more
         </SeeMore>
       )}
@@ -375,143 +424,33 @@ const Note = ({ note, fresh }) => {
   );
 };
 
-// The pages after the form: the notes, newest first, six to a page.
-const notePages = (notes, failed, freshId) => {
-  const message = failed
-    ? "The notes couldn’t be loaded right now."
-    : !notes
-    ? "Loading notes…"
-    : !notes.length && "No notes yet. Yours could be the first.";
-  if (message) return [{ id: "notes", head: "Community Journal", body: <Empty>{message}</Empty> }];
-
-  const pages = [];
-  for (let i = 0; i < notes.length; i += PER_PAGE) {
-    pages.push({
-      id: i === 0 ? "notes" : undefined,
-      head: "Community Journal",
-      body: (
-        <NoteBoard>
-          {notes.slice(i, i + PER_PAGE).map((note) => (
-            <Note key={note.id} note={note} fresh={note.id === freshId} />
-          ))}
-        </NoteBoard>
-      ),
-    });
-  }
-  return pages;
-};
-
-// The Community Journal's first page, where visitors write.
-export const JOURNAL_FORM = {
-  title: "Leave a note",
-  head: "Community Journal",
-  body: ({ turnTo }) => <NoteForm turnTo={turnTo} />,
-};
-
-// Opens like any other book, with the visitors' notes added after the form.
-export const CommunityJournal = ({ book, vp, ...props }) => {
-  const phone = vp.w < 760;
-  const [notes, setNotes] = useState(cachedNotes);
-  const [failed, setFailed] = useState(false);
-  const [draft, setDraft] = useState(savedDraft);
-  const [status, setStatus] = useState({ state: "idle" });
-  const [freshId, setFreshId] = useState(null);
-  const [opened, setOpened] = useState(null); // a long note being read in full
-  const freshTimer = useRef(null);
-
-  useEffect(() => {
-    savedDraft = draft;
-  }, [draft]);
-
-  useEffect(() => {
-    let live = true;
-    request(`select=${FIELDS}&order=created_at.desc&limit=600`)
-      .then((rows) => {
-        cachedNotes = rows;
-        if (live) setNotes(rows);
-      })
-      .catch(() => live && !cachedNotes && setFailed(true));
-    return () => {
-      live = false;
-      clearTimeout(freshTimer.current);
-    };
-  }, []);
-
-  // While a note is open, Escape closes it rather than the book.
-  useEffect(() => {
-    if (!opened) return undefined;
-    const onKey = (e) => {
-      e.stopImmediatePropagation();
-      if (e.key === "Escape") setOpened(null);
-    };
-    window.addEventListener("keydown", onKey, true);
-    return () => window.removeEventListener("keydown", onKey, true);
-  }, [opened]);
-
-  const post = async (turnTo) => {
-    setStatus({ state: "sending" });
-    try {
-      const [note] = await request(`select=${FIELDS}`, {
-        method: "POST",
-        headers: { Prefer: "return=representation" },
-        body: JSON.stringify({ body: draft.body.trim(), name: draft.name.trim() || null, color: draft.color }),
-      });
-      cachedNotes = [note, ...(cachedNotes || [])];
-      setNotes(cachedNotes);
-      setFailed(false);
-      setDraft({ ...EMPTY_DRAFT, color: draft.color });
-      setStatus({ state: "stuck" });
-      // Press the new note on once; copies drawn later (as a leaf turns) don't repeat it.
-      setFreshId(note.id);
-      clearTimeout(freshTimer.current);
-      freshTimer.current = setTimeout(() => setFreshId(null), 1500);
-      turnTo("notes");
-    } catch (error) {
-      setStatus({ state: "error", message: error.message });
-    }
-  };
-
-  const pages = useMemo(
-    () => [...book.pages, ...notePages(notes, failed, freshId)],
-    [book.pages, notes, failed, freshId]
-  );
-  const withNotes = useMemo(() => ({ ...book, pages }), [book, pages]);
-
-  return (
-    <Journal.Provider value={{ draft, setDraft, post, status, openNote: setOpened }}>
-      <OpenBook book={withNotes} vp={vp} {...props} />
-
-      <AnimatePresence>
-        {opened && (
-          <Lightbox
-            key="note"
-            role="dialog"
-            aria-label="Note"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            onClick={() => setOpened(null)}
-          >
-            <NoteFull
-              color={opened.color}
-              $dark={isDark(opened.color)}
-              onClick={(e) => e.stopPropagation()}
-              initial={{ scale: 0.96, rotate: TILTS[opened.id % TILTS.length] }}
-              animate={{ scale: 1, rotate: 0 }}
-              exit={{ scale: 0.96 }}
-              transition={{ duration: 0.22, ease: "easeOut" }}
-            >
-              <NoteFullText>{opened.body}</NoteFullText>
-              <Signature note={opened} />
-            </NoteFull>
-            <CloseButton aria-label="Close note" title="Close" $compact={!phone} onClick={() => setOpened(null)}>
-              <span aria-hidden>×</span>
-              {phone && " Close"}
-            </CloseButton>
-          </Lightbox>
-        )}
-      </AnimatePresence>
-    </Journal.Provider>
-  );
-};
+// A note opened in full, over everything. Render inside AnimatePresence.
+export const NoteLightbox = ({ note, phone, onClose }) => (
+  <Lightbox
+    data-overlay=""
+    role="dialog"
+    aria-label="Note"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    transition={{ duration: 0.2 }}
+    onClick={onClose}
+  >
+    <NoteFull
+      color={note.color}
+      $dark={isDark(note.color)}
+      onClick={(e) => e.stopPropagation()}
+      initial={{ scale: 0.96, rotate: TILTS[note.id % TILTS.length] }}
+      animate={{ scale: 1, rotate: 0 }}
+      exit={{ scale: 0.96 }}
+      transition={{ duration: 0.22, ease: "easeOut" }}
+    >
+      <NoteFullText>{note.body}</NoteFullText>
+      <Signature note={note} />
+    </NoteFull>
+    <CloseButton aria-label="Close note" title="Close" $compact={!phone} onClick={onClose}>
+      <span aria-hidden>×</span>
+      {phone && " Close"}
+    </CloseButton>
+  </Lightbox>
+);

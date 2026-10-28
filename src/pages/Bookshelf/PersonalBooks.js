@@ -1,8 +1,6 @@
 import React from "react";
 import profile from "../../assets/profile.jpg";
-import { PIECES } from "./writing";
-import { CommunityJournal, JOURNAL_FORM } from "./CommunityJournal";
-import {
+import { PIECES } from "./writing";import {
   Asterism,
   BookLink,
   Body,
@@ -490,19 +488,5 @@ export const PERSONAL = [
     font: "serifCaps",
     bands: true,
     pages: albumPages,
-  },
-  {
-    // Written by visitors; its notes load when it opens (see CommunityJournal.js).
-    title: "Community Journal",
-    author: "Visitors",
-    color: "#b98a3a",
-    ink: "#2c2216",
-    w: 44,
-    h: 400,
-    ratio: 0.75,
-    font: "serifCaps",
-    bands: true,
-    pages: [JOURNAL_FORM],
-    Open: CommunityJournal,
   },
 ];

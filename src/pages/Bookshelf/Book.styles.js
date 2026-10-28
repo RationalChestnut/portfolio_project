@@ -781,7 +781,7 @@ export const NOTE_COLORS = ["#f6e27f", "#f3c4bf", "#c5dbec", "#d0e4b9"];
 
 /* Paper square with a slightly darker adhesive strip along its top. Its ink is
    light on a dark note; everything written on it uses --note-ink and --note-soft. */
-const notePaper = (color, dark) => `
+export const notePaper = (color, dark) => `
   --note-ink: ${dark ? "#f7f2e8" : "#2f2a24"};
   --note-soft: ${dark ? "rgba(247, 242, 232, 0.72)" : "#5a4f44"};
   background: linear-gradient(to bottom, rgba(60, 45, 25, 0.06), rgba(60, 45, 25, 0) 1.2em),
@@ -925,7 +925,7 @@ export const CustomSwatch = styled(Swatch)`
       ? `radial-gradient(circle, ${color} 0 52%, transparent 54%), conic-gradient(#f66, #fd5, #7d7, #5cf, #a8f, #f6c, #f66)`
       : "conic-gradient(#f66, #fd5, #7d7, #5cf, #a8f, #f6c, #f66)"};
   border-radius: 50%;
-  box-shadow: ${({ "aria-expanded": open, "aria-checked": on }) => (open || on ? selected : "none")};
+  box-shadow: ${({ $open, "aria-checked": on }) => ($open || on ? selected : "none")};
 `;
 
 /* Pick any color: drag across saturation and brightness, then along the hue */

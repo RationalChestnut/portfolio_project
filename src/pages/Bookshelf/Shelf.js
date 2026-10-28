@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AnimatePresence, useSpring } from "framer-motion";
 import { OpenBook } from "./Book";
+import { Corkboard } from "./Corkboard";
 import { PERSONAL } from "./PersonalBooks";
 import {
   Band,
@@ -100,6 +101,10 @@ const tint = (hex, amount = 0.12) => {
 
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 
+// Something over the shelf (an open book, or a note or form from the corkboard)
+// that should get the wheel, keys and swipes instead.
+const overlayOpen = () => !!document.querySelector("[data-overlay]");
+
 const ORDINALS = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth", "thirteenth", "fourteenth", "fifteenth", "sixteenth", "seventeenth", "eighteenth", "nineteenth"];
 const TENS = { 2: ["twentieth", "twenty"], 3: ["thirtieth", "thirty"], 4: ["fortieth", "forty"] };
 
@@ -155,18 +160,19 @@ export const Shelf = () => {
   const [selected, setSelected] = useState(null);
   const selectedRef = useRef(selected);
   selectedRef.current = selected;
+  const covered = () => selectedRef.current !== null || overlayOpen();
   const openTimer = useRef(null);
 
   const vp = useViewport();
   // Phones get their own layout: a masthead, a row of spines, and details below.
   const phone = vp.w < 760;
 
-  // Books scale with the window, leaving room for the shelf below,
-  // and staying narrow enough that the widest cover fits uncropped.
+  // Books scale with the window, leaving room for the shelf below and the
+  // corkboard above, and staying narrow enough that the widest cover fits uncropped.
   const widestCover = 440 * Math.max(...BOOKS.map((book) => book.ratio));
   const s = phone
-    ? clamp(Math.min((vp.h * 0.4) / 440, (vp.w * 0.66) / widestCover), 0.45, 1.2)
-    : clamp(Math.min((vp.h * 0.64) / 440, (vp.w * 0.64) / widestCover), 0.5, 2.2);
+    ? clamp(Math.min((vp.h * 0.32) / 440, (vp.w * 0.66) / widestCover), 0.42, 1.2)
+    : clamp(Math.min((vp.h * 0.5) / 440, (vp.w * 0.5) / widestCover), 0.45, 1.8);
   // Phone spines are drawn thicker so their lettering stays readable.
   const thickness = phone ? 1.55 : 1;
   // Books stand shoulder to shoulder.
@@ -187,6 +193,22 @@ export const Shelf = () => {
 
   // Room above the title and below the author; gilt rules sit inside it.
   const spinePad = Math.round(22 * s);
+
+  // The corkboard hangs on the wall above the books: top right on wide screens,
+  // between the title and the books on phones.
+  const edgeX = Math.round(phone ? vp.w * 0.07 : clamp(vp.w * 0.035, 12, 56));
+  const board = (() => {
+    if (phone) {
+      const top = Math.round(vp.h * 0.09) + 78; // below the title
+      const bottom = vp.h - booksBottom - Math.round(440 * s) - 18;
+      return { left: edgeX, top, width: vp.w - edgeX * 2, height: Math.max(84, bottom - top) };
+    }
+    const top = Math.round(clamp(vp.h * 0.05, 14, 44));
+    const bottom = vp.h - booksBottom - divider.h - 22; // clear of the section tabs
+    const height = clamp(bottom - top, 110, 330);
+    // Wide enough for its title and "Leave a note" side by side.
+    return { right: edgeX, top, width: Math.round(clamp(Math.min(height * 2.6, vp.w * 0.55), 320, 720)), height };
+  })();
 
   const sized = BOOKS.map((book) => {
     const h = Math.round(book.h * s);
@@ -307,7 +329,7 @@ export const Shelf = () => {
   useEffect(() => {
     const el = stageRef.current;
     const onWheel = (e) => {
-      if (selectedRef.current !== null) return; // let the open book's pages scroll
+      if (covered()) return; // let the open book's pages, or the notes, scroll
       e.preventDefault();
       const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
       // Cap each event so one mouse-wheel notch moves one book; trackpads still glide.
@@ -337,6 +359,7 @@ export const Shelf = () => {
         if (e.key === "Escape") setSelected(null);
         return;
       }
+      if (covered()) return; // the corkboard's note or form has the keys
       const at = Math.round(indexRef.current);
       if (e.key === "ArrowRight") goTo(at + 1);
       if (e.key === "ArrowLeft") goTo(at - 1);
@@ -369,7 +392,7 @@ export const Shelf = () => {
       ref={stageRef}
       bg={tint(BOOKS[active].color)}
       onTouchStart={(e) => {
-        touchX.current = e.touches[0].clientX;
+        touchX.current = covered() ? null : e.touches[0].clientX;
         dragged.current = 0;
       }}
       onTouchMove={(e) => {
@@ -398,6 +421,8 @@ export const Shelf = () => {
           <MastTitle>Brian K. Mason</MastTitle>
         </Masthead>
       )}
+
+      <Corkboard box={board} phone={phone} />
 
       <Row gap={gap} pb={booksBottom} style={{ x }}>
         {shelfItems.map((item, k) => {
