@@ -1,23 +1,13 @@
-import { Route, Routes, useLocation } from "react-router-dom";
-import { AppContainer } from "./App.styles";
-import { Navbar } from "./components/NavigationBar/NavigationBar";
-import { About } from "./pages/About/About";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { Bookshelf } from "./pages/Bookshelf/Bookshelf";
-import { Placeholder } from "./pages/Placeholder/Placeholder";
 
+// The whole site is the bookshelf; any other address leads back to it.
 function App() {
-  const { pathname } = useLocation();
-
   return (
-    <AppContainer>
-      {pathname !== "/bookshelf" && <Navbar />}
-      <Routes>
-        <Route path="/" element={<About />} />
-        <Route path="/bookshelf" element={<Bookshelf />} />
-        <Route path="/writing" element={<Placeholder title="Writing" />} />
-        <Route path="/projects" element={<Placeholder title="Projects" />} />
-      </Routes>
-    </AppContainer>
+    <Routes>
+      <Route path="/" element={<Bookshelf />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
 
