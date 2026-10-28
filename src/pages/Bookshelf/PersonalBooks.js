@@ -32,7 +32,10 @@ import {
   PrintRow,
   Prose,
   Quote,
+  QuoteBody,
+  QuoteDetail,
   QuoteSource,
+  QuoteTitle,
   Scrapbook,
   SeasonTitle,
   SectionHead,
@@ -48,8 +51,24 @@ const external = { target: "_blank", rel: "noopener noreferrer" };
 
 // ---- Fill these in; each book's pages are built from them. ----
 
-// Favorite quotes: { text, source }
-const QUOTES = [];
+// Favorite quotes, one to a page: { text, source, title?, detail? }. `text` is a
+// string, or a list of paragraphs for a longer piece.
+const QUOTES = [
+  {
+    title: "If I Had My Life to Live Over",
+    text: [
+      "I’d like to make more mistakes next time. I’d relax. I would limber up. I would be sillier than I have been this trip. I would take fewer things seriously. I would take more chances. I would climb more mountains and swim more rivers. I would eat more ice cream and less beans. I would perhaps have more actual troubles, but I’d have fewer imaginary ones.",
+      "You see, I’m one of those people who live sensibly and sanely hour after hour, day after day. Oh, I’ve had my moments, and if I had it to do over again, I’d have more of them. In fact, I’d try to have nothing else. Just moments, one after another, instead of living so many years ahead of each day. I’ve been one of those persons who never goes anywhere without a thermometer, a hot water bottle, a raincoat, and a parachute. If I had to do it again, I would travel lighter than I have.",
+      "If I had my life to live over, I would start barefoot earlier in the spring and stay that way later in the fall. I would go to more dances. I would ride more merry-go-rounds. I would pick more daisies.",
+    ],
+    source: "Nadine Stair",
+    detail: "85 years old, Louisville, Kentucky",
+  },
+  {
+    text: "When I am on my deathbed, I don’t think I will be thinking about a nice pair of shoes I had or my beautiful house. I am going to be thinking about an evening I spent with somebody when I was twenty where I felt I was just absolutely connected to them.",
+    source: "Tom Ford",
+  },
+];
 
 // Photo album, by season. Photos live in public/album; `ratio` is width / height.
 const album = (name) => `${process.env.PUBLIC_URL}/album/${name}.jpg`;
@@ -194,17 +213,27 @@ const goalAreas = (areas) =>
 
 // ---- Favorite Quotes ----
 
-const quotesPage = QUOTES.length ? (
-  <Body>
-    {QUOTES.map(({ text, source }) => (
-      <Quote key={text}>
-        “{text}”<QuoteSource>{source}</QuoteSource>
+// A short quote sits in quotation marks in the middle of its page; a longer,
+// titled piece reads like a page of its own, in a smaller size.
+const quotePage = ({ title, text, source, detail }) => {
+  const paragraphs = Array.isArray(text) ? text : [text];
+  return (
+    <QuoteBody>
+      {title && <QuoteTitle>{title}</QuoteTitle>}
+      <Quote $long={paragraphs.length > 1}>
+        {paragraphs.map((paragraph, i) => (
+          <p key={i}>{title ? paragraph : `“${paragraph}”`}</p>
+        ))}
+        <QuoteSource>{source}</QuoteSource>
+        {detail && <QuoteDetail>{detail}</QuoteDetail>}
       </Quote>
-    ))}
-  </Body>
-) : (
-  <Empty>Coming soon.</Empty>
-);
+    </QuoteBody>
+  );
+};
+
+const quotesPages = QUOTES.length
+  ? QUOTES.map((quote) => ({ head: "Favorite Quotes", body: quotePage(quote) }))
+  : [{ head: "Favorite Quotes", body: <Empty>Coming soon.</Empty> }];
 
 // ---- Writing ----
 
@@ -442,7 +471,7 @@ export const PERSONAL = [
     ratio: 0.7,
     font: "serif",
     bands: true,
-    pages: [{ head: "Favorite Quotes", body: quotesPage }],
+    pages: quotesPages,
   },
   {
     title: "Writing",

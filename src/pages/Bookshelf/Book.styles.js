@@ -483,21 +483,54 @@ export const Pending = styled.p`
   color: ${muted};
 `;
 
+/* One quote, centered on its page */
+export const QuoteBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100%;
+`;
+
+export const QuoteTitle = styled.h3`
+  margin: 0 0 1.3em;
+  font-weight: 400;
+  font-size: 0.74em;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #6e6155;
+`;
+
+/* A long piece is set smaller so it fits its page */
 export const Quote = styled.blockquote`
-  margin: 0 0 1.6em;
+  margin: 0;
   padding: 0;
-  font-size: 1.08em;
+  font-size: ${({ $long }) => ($long ? 0.98 : 1.22)}em;
   font-style: italic;
-  line-height: 1.6;
+  line-height: ${({ $long }) => ($long ? 1.55 : 1.6)};
+
+  & p {
+    margin: 0 0 ${({ $long }) => ($long ? 0.8 : 0.4)}em;
+  }
 `;
 
 export const QuoteSource = styled.cite`
   display: block;
-  margin-top: 0.4em;
-  font-size: 0.72em;
+  margin-top: 1.2em;
+  font-size: 0.66em;
   font-style: normal;
   letter-spacing: 0.2em;
   text-transform: uppercase;
+  color: ${muted};
+
+  &::before {
+    content: "— ";
+  }
+`;
+
+export const QuoteDetail = styled.span`
+  display: block;
+  margin-top: 0.3em;
+  font-size: 0.78em;
   color: ${muted};
 `;
 
