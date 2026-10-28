@@ -175,6 +175,9 @@ export const Corkboard = ({ box, phone }) => {
                     + Leave a note
                   </HandCard>
                 </BigHead>
+                {notes && !notes.length && (
+                  <BoardNote fs={phone ? 20 : 26}>No notes yet. Be the first.</BoardNote>
+                )}
                 <AllNotes>
                   {(notes || []).map((note) => (
                     <NoteSlot

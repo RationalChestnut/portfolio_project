@@ -254,13 +254,19 @@ export const BigBoard = styled(motion.div)`
   }
 `;
 
+/* Tall even with few notes, like a real board */
 export const BigCork = styled.div`
   position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: min(74vh, 720px);
+  box-sizing: border-box;
   padding: 26px 28px 34px;
   box-shadow: inset 0 0 0 1px rgba(60, 35, 15, 0.25), inset 0 3px 8px rgba(60, 35, 15, 0.35);
 
   /* Before the cork's ::after block, which would otherwise swallow it */
   ${narrow} {
+    min-height: 72vh;
     padding: 18px 14px 24px;
   }
 
