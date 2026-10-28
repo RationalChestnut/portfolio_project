@@ -148,6 +148,8 @@ export const OpenBook = ({ book, vp, onClose }) => {
 
   useEffect(() => {
     const onKey = (e) => {
+      // Arrows move the caret, or a color slider, instead of turning the page.
+      if (e.target.closest && e.target.closest("input, textarea, [role='slider']")) return;
       if (e.key === "ArrowRight") go(1);
       if (e.key === "ArrowLeft") go(-1);
     };

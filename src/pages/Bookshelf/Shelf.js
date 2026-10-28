@@ -361,6 +361,9 @@ export const Shelf = () => {
     else goTo(i);
   };
 
+  // A book can bring its own way of opening (the Community Journal loads its notes).
+  const Opened = selected !== null && (BOOKS[selected].Open || OpenBook);
+
   return (
     <Stage
       ref={stageRef}
@@ -502,7 +505,7 @@ export const Shelf = () => {
 
       <AnimatePresence>
         {selected !== null && (
-          <OpenBook
+          <Opened
             book={BOOKS[selected]}
             vp={vp}
             onClose={() => setSelected(null)}

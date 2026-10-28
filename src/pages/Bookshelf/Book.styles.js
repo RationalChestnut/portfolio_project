@@ -772,3 +772,467 @@ export const PhotoCorner = styled.span`
   );
   opacity: 0.88;
 `;
+
+/* ---------- Community Journal ---------- */
+
+const hand = `"Caveat", cursive`;
+
+export const NOTE_COLORS = ["#f6e27f", "#f3c4bf", "#c5dbec", "#d0e4b9"];
+
+/* Paper square with a slightly darker adhesive strip along its top. Its ink is
+   light on a dark note; everything written on it uses --note-ink and --note-soft. */
+const notePaper = (color, dark) => `
+  --note-ink: ${dark ? "#f7f2e8" : "#2f2a24"};
+  --note-soft: ${dark ? "rgba(247, 242, 232, 0.72)" : "#5a4f44"};
+  background: linear-gradient(to bottom, rgba(60, 45, 25, 0.06), rgba(60, 45, 25, 0) 1.2em),
+    linear-gradient(135deg, rgba(255, 255, 255, 0) 78%, rgba(60, 45, 25, 0.05)),
+    ${color};
+  box-shadow: 0 1px 1px rgba(60, 45, 25, 0.12), 0 10px 14px -10px rgba(60, 45, 25, 0.5);
+`;
+
+export const JournalTitle = styled(SeasonTitle).attrs({ as: "h2" })`
+  margin-bottom: 0.5em;
+`;
+
+export const JournalIntro = styled.p`
+  margin: 0;
+  line-height: 1.6;
+`;
+
+export const JournalForm = styled.form`
+  margin: 0;
+`;
+
+/* The note being written, on a sticky note of its own */
+export const NoteDraft = styled.div`
+  position: relative;
+  width: 15em;
+  max-width: 100%;
+  height: 11.5em;
+  margin: 1.5em auto 1.3em;
+  transform: rotate(-1.5deg);
+  ${({ color, $dark }) => notePaper(color, $dark)}
+`;
+
+export const NoteInput = styled.textarea`
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 1.1em 1.1em 1.9em;
+  border: none;
+  background: transparent;
+  resize: none;
+  outline: none;
+  font-family: ${hand};
+  font-size: 1.5em;
+  line-height: 1.15;
+  color: var(--note-ink);
+
+  &::placeholder {
+    color: var(--note-soft);
+    opacity: 0.7;
+  }
+`;
+
+export const NoteCount = styled.span`
+  position: absolute;
+  right: 0.9em;
+  bottom: 0.6em;
+  font-size: 0.72em;
+  color: var(--note-soft);
+  pointer-events: none;
+`;
+
+export const SignLine = styled.label`
+  display: flex;
+  align-items: baseline;
+  gap: 0.6em;
+  font-style: italic;
+  color: ${muted};
+`;
+
+export const SignInput = styled.input`
+  flex: 1;
+  min-width: 0;
+  padding: 0.15em 0;
+  border: none;
+  border-bottom: 1px solid #cfc3ae;
+  border-radius: 0;
+  background: transparent;
+  outline: none;
+  font-family: ${hand};
+  font-size: 1.35em;
+  color: ${ink};
+  transition: border-color 0.2s ease;
+
+  &:focus {
+    border-bottom-color: ${ink};
+  }
+
+  &::placeholder {
+    color: rgba(138, 127, 114, 0.7);
+  }
+`;
+
+export const FormRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+  margin-top: 1.4em;
+`;
+
+export const Swatches = styled.div`
+  display: flex;
+  gap: 0.6em;
+
+  ${narrow} {
+    gap: 7px;
+  }
+`;
+
+const selected = `0 0 0 2px #f6f1e6, 0 0 0 3px ${ink}`;
+
+export const Swatch = styled.button`
+  width: 1.7em;
+  height: 1.7em;
+  padding: 0;
+  border: 1px solid rgba(60, 45, 25, 0.18);
+  border-radius: 2px;
+  background: ${({ color }) => color};
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: ${({ "aria-checked": on }) => (on ? selected : "none")};
+
+  &:focus-visible {
+    box-shadow: 0 0 0 2px #f6f1e6, 0 0 0 3px ${muted};
+  }
+
+  ${narrow} {
+    width: 26px;
+    height: 26px;
+  }
+`;
+
+/* Opens the color picker: a color wheel, or the chosen color ringed by one */
+export const CustomSwatch = styled(Swatch)`
+  border: none;
+  background: ${({ color }) =>
+    color
+      ? `radial-gradient(circle, ${color} 0 52%, transparent 54%), conic-gradient(#f66, #fd5, #7d7, #5cf, #a8f, #f6c, #f66)`
+      : "conic-gradient(#f66, #fd5, #7d7, #5cf, #a8f, #f6c, #f66)"};
+  border-radius: 50%;
+  box-shadow: ${({ "aria-expanded": open, "aria-checked": on }) => (open || on ? selected : "none")};
+`;
+
+/* Pick any color: drag across saturation and brightness, then along the hue */
+export const ColorPanel = styled.div`
+  display: flex;
+  gap: 1.2em;
+  margin-top: 1.2em;
+`;
+
+export const ColorField = styled.div`
+  position: relative;
+  flex: none;
+  width: 8em;
+  height: 5.6em;
+  border-radius: 3px;
+  background: linear-gradient(to top, #000, rgba(0, 0, 0, 0)),
+    linear-gradient(to right, #fff, hsl(${({ hue }) => hue}, 100%, 50%));
+  box-shadow: inset 0 0 0 1px rgba(60, 45, 25, 0.15);
+  cursor: crosshair;
+  touch-action: none;
+  outline: none;
+
+  &:focus-visible {
+    box-shadow: 0 0 0 2px #f6f1e6, 0 0 0 3px ${muted};
+  }
+
+  ${narrow} {
+    width: 9.5em;
+    height: 7em;
+  }
+`;
+
+export const HueBar = styled.div`
+  position: relative;
+  height: 1em;
+  border-radius: 999px;
+  background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+  box-shadow: inset 0 0 0 1px rgba(60, 45, 25, 0.15);
+  cursor: pointer;
+  touch-action: none;
+  outline: none;
+
+  &:focus-visible {
+    box-shadow: 0 0 0 2px #f6f1e6, 0 0 0 3px ${muted};
+  }
+
+  ${narrow} {
+    height: 22px;
+  }
+`;
+
+export const PickerThumb = styled.span`
+  position: absolute;
+  width: 0.95em;
+  height: 0.95em;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-sizing: border-box;
+  background: ${({ color }) => color};
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.35);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+
+  ${narrow} {
+    width: 20px;
+    height: 20px;
+  }
+`;
+
+export const PickerSide = styled.div`
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.7em;
+`;
+
+export const PickerRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+`;
+
+export const HexInput = styled.input`
+  width: 5.6em;
+  padding: 0.15em 0;
+  border: none;
+  border-bottom: 1px solid #cfc3ae;
+  border-radius: 0;
+  background: transparent;
+  outline: none;
+  font-family: ${garamond};
+  font-size: 0.95em;
+  letter-spacing: 0.06em;
+  color: ${ink};
+
+  &:focus {
+    border-bottom-color: ${ink};
+  }
+
+  ${narrow} {
+    font-size: 16px; /* iOS zooms into smaller inputs */
+  }
+`;
+
+export const RgbReadout = styled.span`
+  font-size: 0.78em;
+  font-style: italic;
+  color: ${muted};
+  white-space: nowrap;
+`;
+
+export const DropperButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 1.9em;
+  height: 1.9em;
+  margin-left: auto;
+  padding: 0;
+  border: 1px solid #d8cdb9;
+  border-radius: 50%;
+  background: #f6f1e6;
+  color: #6e6155;
+  cursor: pointer;
+  font-size: 1em;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: ${ink};
+  }
+
+  ${narrow} {
+    width: 34px;
+    height: 34px;
+    font-size: 17px;
+  }
+`;
+
+export const StickButton = styled.button`
+  padding: 0.8em 1.5em;
+  border: 1px solid ${ink};
+  border-radius: 999px;
+  background: ${ink};
+  color: #f6f1e6;
+  cursor: pointer;
+  font-family: ${garamond};
+  font-size: 0.74em;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  ${narrow} {
+    padding: 0.8em 1.1em;
+    font-size: 12px;
+  }
+`;
+
+export const FormStatus = styled.p`
+  min-height: 1.5em;
+  margin: 1em 0 0;
+  font-size: 0.88em;
+  font-style: italic;
+  color: ${({ error }) => (error ? accent : muted)};
+`;
+
+/* Visitors' notes, six to a page */
+export const NoteBoard = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 12em);
+  grid-auto-rows: 11em;
+  justify-content: space-between;
+  row-gap: 1.6em;
+  padding: 0.3em 0.6em 0;
+
+  ${narrow} {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: auto;
+    gap: 1.3em 1em;
+    padding: 0.3em 0 0;
+  }
+`;
+
+export const StickyNote = styled(motion.figure)`
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 1.2em 1.1em 0.8em;
+  overflow: hidden;
+  ${({ color, $dark }) => notePaper(color, $dark)}
+
+  ${narrow} {
+    aspect-ratio: 1;
+    padding: 1em 0.8em 0.6em;
+  }
+`;
+
+/* Fades out at the bottom when a long note doesn't fit */
+const fadeOut = `
+  -webkit-mask-image: linear-gradient(to bottom, #000 65%, transparent);
+  mask-image: linear-gradient(to bottom, #000 65%, transparent);
+`;
+
+export const NoteText = styled.p`
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  margin: 0;
+  font-family: ${hand};
+  font-size: ${({ size }) => size}em;
+  line-height: 1.12;
+  white-space: pre-line;
+  color: var(--note-ink);
+  overflow-wrap: anywhere;
+  ${({ $clipped }) => $clipped && fadeOut}
+
+  ${narrow} {
+    font-size: ${({ size }) => size * 0.9}em;
+  }
+`;
+
+export const SeeMore = styled.button`
+  align-self: flex-start;
+  flex: none;
+  margin: 0.15em 0 0;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: ${garamond};
+  font-size: 0.74em;
+  font-style: italic;
+  color: var(--note-ink);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  -webkit-tap-highlight-color: transparent;
+
+  ${narrow} {
+    font-size: 13px;
+  }
+`;
+
+export const NoteSign = styled.figcaption`
+  display: flex;
+  flex: none;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5em;
+  margin-top: 0.4em;
+  font-family: ${hand};
+  font-size: 1.05em;
+  line-height: 1.1;
+  color: var(--note-soft);
+  overflow-wrap: anywhere;
+`;
+
+export const NoteDate = styled.span`
+  flex: none;
+  font-family: ${garamond};
+  font-size: 0.66em;
+  font-style: italic;
+  color: var(--note-soft);
+`;
+
+/* A note opened in full, over everything; a tap outside closes it */
+export const NoteFull = styled(motion.figure)`
+  display: flex;
+  flex-direction: column;
+  width: min(560px, 100%);
+  max-height: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 40px 36px 26px;
+  overflow: auto;
+  cursor: auto;
+  font-size: 18px;
+  ${({ color, $dark }) => notePaper(color, $dark)}
+
+  /* Clear of the Close button above it */
+  ${narrow} {
+    max-height: calc(100% - 48px);
+    margin-top: 48px;
+    padding: 30px 24px 20px;
+  }
+`;
+
+export const NoteFullText = styled.p`
+  margin: 0 0 1em;
+  font-family: ${hand};
+  font-size: 1.5em;
+  line-height: 1.22;
+  white-space: pre-wrap;
+  color: var(--note-ink);
+  overflow-wrap: anywhere;
+
+  ${narrow} {
+    font-size: 1.3em;
+  }
+`;
