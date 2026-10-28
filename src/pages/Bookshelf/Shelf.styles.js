@@ -417,3 +417,19 @@ export const CoverAuthor = styled.span`
   color: ${({ ink }) => ink};
   opacity: 0.88;
 `;
+
+/* A photo set into a lettered cover, between the title and the author, with a
+   thin cream mat like a tipped-in print */
+export const CoverPhoto = styled.img`
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 76%;
+  margin: 8% 0 9%;
+  box-sizing: border-box;
+  object-fit: cover;
+  object-position: 50% 32%;
+  border: ${({ mat }) => mat}px solid #efe6d5;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.22), 0 2px 6px rgba(0, 0, 0, 0.35);
+`;

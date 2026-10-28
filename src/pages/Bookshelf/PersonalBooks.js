@@ -1,11 +1,11 @@
 import React from "react";
-import profile from "../../assets/profile.jpg";
-import { PIECES } from "./writing";import {
+import aboutCover from "../../assets/about-cover.jpg";
+import { PIECES } from "./writing";
+import {
   Asterism,
   BookLink,
   Body,
   Bullets,
-  Caption,
   Compact,
   ContentsEntry,
   ContentsGroup,
@@ -27,9 +27,6 @@ import { PIECES } from "./writing";import {
   Para,
   Pending,
   PhotoCorner,
-  Plate,
-  PlateFrame,
-  PlateImage,
   Print,
   PrintImage,
   PrintRow,
@@ -47,8 +44,6 @@ import { PIECES } from "./writing";import {
 
 const AUTHOR = "Brian K. Mason";
 const EMAIL = "brian.kw.mason@gmail.com";
-// Where the profile photo was taken.
-const PHOTO_PLACE = "Pisgah National Forest, North Carolina";
 const external = { target: "_blank", rel: "noopener noreferrer" };
 
 // ---- Fill these in; each book's pages are built from them. ----
@@ -423,20 +418,11 @@ export const PERSONAL = [
     ratio: 0.74,
     font: "serifCaps",
     bands: true,
+    // Set into the cover between the title and the name.
+    photo: { src: aboutCover, alt: "Brian Mason" },
     pages: [
       {
         title: "About Me",
-        head: AUTHOR,
-        body: (
-          <Plate>
-            <PlateFrame>
-              <PlateImage src={profile} alt="Brian Mason" />
-            </PlateFrame>
-            <Caption>{PHOTO_PLACE}.</Caption>
-          </Plate>
-        ),
-      },
-      {
         head: "About Me",
         body: aboutPage,
         foot: <PageNote href={`mailto:${EMAIL}`}>{EMAIL}</PageNote>,
