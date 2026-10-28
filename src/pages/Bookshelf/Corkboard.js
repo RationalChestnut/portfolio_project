@@ -84,14 +84,22 @@ export const Corkboard = ({ box, phone }) => {
 
   return (
     <>
-      <Board aria-label="Community Journal" frame={FRAME} style={box}>
+      {/* Clicking anywhere on the board opens it big; its cards and notes do their own thing. */}
+      <Board aria-label="Community Journal" frame={FRAME} style={box} onClick={() => setMode("all")}>
         <Cork pad={pad} gap={gap}>
           <BoardHead h={headH}>
             <Card tilt={-1.2} fs={clamp(Math.round(headH * 0.36), 9, 12)} onClick={() => setMode("all")}>
               <Pin size={pin} color={PIN_COLORS[1]} />
               Community Journal
             </Card>
-            <HandCard tilt={1.4} fs={clamp(Math.round(headH * 0.68), 15, 22)} onClick={() => setMode("write")}>
+            <HandCard
+              tilt={1.4}
+              fs={clamp(Math.round(headH * 0.68), 15, 22)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setMode("write");
+              }}
+            >
               <Pin size={pin} color={PIN_COLORS[0]} />
               + Leave a note
             </HandCard>
@@ -120,7 +128,10 @@ export const Corkboard = ({ box, phone }) => {
                   animate={{ opacity: 1, scale: 1 }}
                   whileHover={{ scale: 1.05 }}
                   transition={{ type: "spring", stiffness: 320, damping: 20 }}
-                  onClick={() => setOpened(note)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpened(note);
+                  }}
                 >
                   <Pin size={pin} color={PIN_COLORS[note.id % PIN_COLORS.length]} />
                   <MiniText size={miniSize(note.body, side)}>{note.body}</MiniText>

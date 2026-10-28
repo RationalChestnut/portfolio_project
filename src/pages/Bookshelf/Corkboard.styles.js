@@ -34,6 +34,7 @@ export const Board = styled.section`
   box-sizing: border-box;
   padding: ${({ frame }) => frame}px;
   border-radius: 3px;
+  cursor: pointer;
   background: linear-gradient(to bottom, #93653f, #6f4628);
   box-shadow: inset 0 1px 0 rgba(255, 228, 196, 0.35), inset 0 -1px 0 rgba(0, 0, 0, 0.3),
     0 2px 3px rgba(45, 30, 15, 0.16), 0 20px 32px -18px rgba(45, 30, 15, 0.55);
