@@ -191,6 +191,7 @@ export const Box = styled(motion.div)`
 export const Front = styled.div`
   position: absolute;
   inset: 0;
+  transform: translateZ(0.5px);
   backface-visibility: hidden;
   background-color: ${({ color }) => color};
   ${({ img }) =>
