@@ -21,8 +21,6 @@ import {
   Lower,
   Masthead,
   MastTitle,
-  Rating,
-  RatingValue,
   Plank,
   PlankFront,
   PlankTop,
@@ -42,7 +40,6 @@ const dp = (id) => `https://www.amazon.com/dp/${id}`;
 const cover = (slug) => `${process.env.PUBLIC_URL}/covers/${slug}.jpg`;
 
 // Spine colors follow each book's real cover; `font` picks the spine lettering.
-// Add `rating: 8` to a book to show "My rating 8/10" under the shelf on phones.
 const READ = [
   { title: "Born of This Land", author: "Chung Ju-yung", color: "#332b29", ink: "#efe6d6", w: 46, h: 410, font: "serif", cover: cover("born-of-this-land"), ratio: 0.667, url: "https://en.asaninst.org/?p=49491", note: "The Hyundai founder's own life story." },
   { title: "The Stranger", author: "Albert Camus", color: "#1a1f33", ink: "#e8e1cf", w: 32, h: 365, font: "serifCaps", cover: cover("the-stranger"), ratio: 0.63, url: dp("0679720200"), note: "An indifferent man, a killing, and the absurd." },
@@ -113,16 +110,6 @@ const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 // Something over the shelf (an open book, or a note or form from the corkboard)
 // that should get the wheel, keys and swipes instead.
 const overlayOpen = () => !!document.querySelector("[data-overlay]");
-
-const ORDINALS = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth", "thirteenth", "fourteenth", "fifteenth", "sixteenth", "seventeenth", "eighteenth", "nineteenth"];
-const TENS = { 2: ["twentieth", "twenty"], 3: ["thirtieth", "thirty"], 4: ["fortieth", "forty"] };
-
-// 1 -> "first", 23 -> "twenty-third"
-const ordinal = (n) => {
-  if (n < 20) return ORDINALS[n - 1];
-  const [round, prefix] = TENS[Math.floor(n / 10)] || ["", ""];
-  return n % 10 ? `${prefix}-${ORDINALS[(n % 10) - 1]}` : round;
-};
 
 const lastName = (author) => author.split(" ").pop();
 
@@ -521,20 +508,11 @@ export const Shelf = () => {
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.22 }}
           >
-            <Kicker>The {ordinal(active + 1)} volume</Kicker>
             <DetailTitle>{BOOKS[active].title}</DetailTitle>
             {BOOKS[active].pages ? (
               <DetailNote>Tap to open</DetailNote>
             ) : (
-              <>
-                <DetailAuthor>{BOOKS[active].author}</DetailAuthor>
-                <Rating>
-                  My rating
-                  <RatingValue unrated={!BOOKS[active].rating}>
-                    {BOOKS[active].rating ? `${BOOKS[active].rating}/10` : "Unrated"}
-                  </RatingValue>
-                </Rating>
-              </>
+              <DetailAuthor>{BOOKS[active].author}</DetailAuthor>
             )}
           </Details>
         </AnimatePresence>

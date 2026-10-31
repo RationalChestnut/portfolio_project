@@ -377,24 +377,6 @@ export const DetailNote = styled.div`
   color: #7a6f63;
 `;
 
-export const Rating = styled.div`
-  margin-top: 10px;
-  font-family: ${garamond};
-  font-size: 11px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: #8a7f72;
-`;
-
-export const RatingValue = styled.span`
-  margin-left: 0.7em;
-  font-size: 17px;
-  letter-spacing: 0.02em;
-  text-transform: none;
-  font-style: ${({ unrated }) => (unrated ? "italic" : "normal")};
-  color: ${({ unrated }) => (unrated ? "#8a7f72" : "#2a241f")};
-`;
-
 /* Lettering for books without a photographed cover (About Me) */
 export const CoverTitle = styled.span`
   position: relative;
