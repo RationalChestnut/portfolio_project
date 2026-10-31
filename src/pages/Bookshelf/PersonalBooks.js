@@ -106,7 +106,6 @@ const GOALS_2026 = [
   {
     area: "Relationships",
     goals: [
-      "Find a girl I love",
       "Go on 3 trips that require flights with friends",
       "Organize 3 “events” with friends",
     ],
@@ -147,7 +146,6 @@ const GOALS_2025 = [
     area: "Relationships",
     goals: [
       "Call 1 high school friend a week",
-      { text: "Find a girl I love", done: true },
       { text: "Go on a spring break trip", done: true },
       "Become acquaintances with ~7.5% of Duke's class (120 people)",
       { text: "Find 20 friends I love", done: true },
