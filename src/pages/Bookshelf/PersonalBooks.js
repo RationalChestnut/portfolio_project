@@ -92,15 +92,30 @@ const GOALS_2026 = [
   {
     area: "Adventure",
     goals: [
+      "Visit 3 countries during Korea study abroad",
       "Learn to sing",
-      "Perform improv at 3 different venues",
-      "Travel somewhere new for spring break",
+      "Learn 3 songs on guitar",
+      "Learn to act",
+      "Perform a freestyle rap battle",
     ],
   },
-  { area: "Work", goals: [] },
-  { area: "Relationships", goals: [] },
-  { area: "Health & Fitness", goals: [] },
-  { area: "Misc.", goals: [] },
+  {
+    area: "Work",
+    goals: ["Either start something or join a company I am interested in", "Average a B+"],
+  },
+  {
+    area: "Relationships",
+    goals: [
+      "Find a girl I love",
+      "Go on 3 trips that require flights with friends",
+      "Organize 3 “events” with friends",
+    ],
+  },
+  {
+    area: "Health & Fitness",
+    goals: ["Weigh 170 lbs", "11% body fat", "225 bench press", "315 squat", "Sub 1:20 Hyrox", "Run a 3:30 marathon"],
+  },
+  { area: "Misc.", goals: ["Read 20 books"] },
 ];
 
 // 2025 goals (from the site's earlier home page).
@@ -153,11 +168,9 @@ const GOALS_2025 = [
 const aboutPage = (
   <Body>
     <Lead>
-      My name is Brian Mason. I grew up in Bethesda, Maryland. I love being
-      active — running, lifting, tennis, spikeball — reading, writing, and
-      playing guitar. I’m incredibly competitive, have an addictive
-      personality, and am the type of person who constantly has a scheme for
-      improving his own life.
+      My name is Brian Mason. I’m from Bethesda, Maryland. I enjoy being
+      active — running, spikeball, tennis, soccer — reading, writing, and
+      playing the guitar.
     </Lead>
     <Indent>My top three life goals:</Indent>
     <Goals>
@@ -409,7 +422,7 @@ const albumPage = (photos, title, seasonName, startIndex, showPhoto) => {
                 ) : (
                   <Tape color={TAPES[k % TAPES.length]} tilt={k % 2 ? 3 : -2} />
                 )}
-                <PrintImage src={photo.src} alt={alt} loading="lazy" />
+                <PrintImage src={photo.src} alt={alt} style={{ aspectRatio: photo.ratio }} />
               </Print>
             );
           })}
@@ -503,5 +516,6 @@ export const PERSONAL = [
     font: "serifCaps",
     bands: true,
     pages: albumPages,
+    preload: ALBUM.flatMap(({ photos }) => photos.map((photo) => photo.src)),
   },
 ];

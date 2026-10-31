@@ -763,10 +763,12 @@ export const LightboxImage = styled(motion.img)`
   box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.6);
 `;
 
+/* Holds its shape, in a soft paper tone, until the photo arrives */
 export const PrintImage = styled.img`
   display: block;
   width: 100%;
   height: auto;
+  background: #e4dccd;
 `;
 
 /* Strip of washi tape holding a print to the page */

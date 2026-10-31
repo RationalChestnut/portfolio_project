@@ -80,6 +80,17 @@ export const OpenBook = ({ book, vp, onClose }) => {
   const [photo, setPhoto] = useState(null); // { src, alt } of a photo opened full size
   const stacked = vp.w < 760;
 
+  // Fetch a book's photos as it opens, so pages don't fill in one by one as they turn.
+  const preloaded = useRef([]);
+  useEffect(() => {
+    preloaded.current = (book.preload || []).map((src) => {
+      const img = new Image();
+      img.decoding = "async";
+      img.src = src;
+      return img;
+    });
+  }, [book.preload]);
+
   // A 3:2 spread that fills most of the window.
   const h = Math.round(Math.min(vp.h * 0.92, (vp.w * 0.94) / 1.5));
   const w = Math.round(h * 1.5);
