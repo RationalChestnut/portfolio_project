@@ -44,6 +44,14 @@ const cover = (slug) => `${process.env.PUBLIC_URL}/covers/${slug}.jpg`;
 // Spine colors follow each book's real cover; `font` picks the spine lettering.
 // Add `rating: 8` to a book to show "My rating 8/10" under the shelf on phones.
 const READ = [
+  { title: "Born of This Land", author: "Chung Ju-yung", color: "#332b29", ink: "#efe6d6", w: 46, h: 410, font: "serif", cover: cover("born-of-this-land"), ratio: 0.667, url: "https://en.asaninst.org/?p=49491", note: "The Hyundai founder's own life story." },
+  { title: "The Stranger", author: "Albert Camus", color: "#1a1f33", ink: "#e8e1cf", w: 32, h: 365, font: "serifCaps", cover: cover("the-stranger"), ratio: 0.63, url: dp("0679720200"), note: "An indifferent man, a killing, and the absurd." },
+  { title: "On Love", author: "Alain de Botton", color: "#f81347", ink: "#ffffff", w: 36, h: 380, font: "plain", cover: cover("on-love"), ratio: 0.684, url: dp("0802134092"), note: "A love affair, examined like philosophy." },
+  { title: "Hunger", author: "Knut Hamsun", color: "#2c2a22", ink: "#c9a64a", w: 36, h: 370, font: "caps", cover: cover("hunger"), ratio: 0.666, url: dp("0374505209"), note: "A starving young writer wanders the streets of Kristiania." },
+  { title: "The Course of Love", author: "Alain de Botton", color: "#f2ebdf", ink: "#c8202a", w: 38, h: 400, font: "serifCaps", cover: cover("the-course-of-love"), ratio: 0.656, url: dp("1501134515"), note: "What happens after happily ever after." },
+  { title: "Siddhartha", author: "Hermann Hesse", color: "#2326a8", ink: "#ffffff", w: 30, h: 350, font: "caps", cover: cover("siddhartha"), ratio: 0.61, url: dp("0553208845"), note: "A young man's search for enlightenment." },
+  { title: "Happiness", author: "Daniel Nettle", color: "#f1cd1a", ink: "#3a3a3a", w: 32, h: 360, font: "plain", cover: cover("happiness"), ratio: 0.725, url: dp("0192805584"), note: "The science behind your smile." },
+  { title: "The Land: Founding", author: "Aleron Kong", color: "#3f4b44", ink: "#e6c36a", w: 50, h: 420, font: "caps", bands: true, cover: cover("the-land-founding"), ratio: 0.698, url: dp("1535020709"), note: "Book one of the Chaos Seeds LitRPG saga." },
   { title: "Sapiens", author: "Yuval Noah Harari", color: "#f3f0e9", ink: "#b0262d", w: 50, h: 430, font: "serifCaps", cover: cover("sapiens"), ratio: 0.662, url: dp("0062316095"), note: "A brief history of humankind." },
   { title: "The Alchemist", author: "Paulo Coelho", color: "#e2742b", ink: "#fdebc9", w: 34, h: 350, font: "serif", bands: true, cover: cover("the-alchemist"), ratio: 0.661, url: dp("0062315005"), note: "A shepherd's journey toward his personal legend." },
   { title: "The Road", author: "Cormac McCarthy", color: "#151515", ink: "#e8e4dc", w: 36, h: 370, font: "serifCaps", cover: cover("the-road"), ratio: 0.649, url: dp("0307387895"), note: "A father and son walk through the ashes." },
@@ -78,7 +86,7 @@ const READ = [
 const ITEMS = [
   { divider: "I", label: "About Me" },
   ...PERSONAL,
-  { divider: "II", label: "The Books I Read" },
+  { divider: "II", label: "Some Books I’ve Read" },
   ...READ,
 ];
 const BOOKS = ITEMS.filter((item) => !item.divider);
